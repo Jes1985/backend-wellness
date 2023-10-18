@@ -23,7 +23,7 @@ class BlogController {
     this.router.post(
       `${this.path}/`,
       zodValidator(createBlog),
-      this.blogService.getById
+      this.blogService.create
     );
     // Ceci aussi est au niveau de /post/route directement. On ne passe pas de param donc j'ai pas mis :id, Du genre ceci c'est pour recuperer tous les blogs.
     this.router.get(`${this.path}/`, this.blogService.getAll);

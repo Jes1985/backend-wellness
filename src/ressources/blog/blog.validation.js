@@ -18,6 +18,9 @@ const updateBlog = z.object({
     description: z.string().optional(),
     category: z.string().optional(),
   }),
+  params: z.object({
+    id: z.string(),
+  })
 });
 
 const getBlog = z.object({
