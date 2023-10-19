@@ -7,7 +7,7 @@ const createChat = z.object({
     recipient: z.string(),
   }),
 });
-// Pour tous les updates met exactement les champs du create suivi par .optional(). Uniquement pour les update
+
 const updateChat = z.object({
   body: z.object({
     sender: z.string().optional(),
