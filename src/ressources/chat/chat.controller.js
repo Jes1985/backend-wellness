@@ -2,9 +2,7 @@ const { Router } = require("express");
 const chatService = require("./chat.service");
 const {
   getChat,
-  deleteChat,
   updateChat,
-  createChat,
 } = require("./chat.validation");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
