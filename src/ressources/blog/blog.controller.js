@@ -28,6 +28,11 @@ class BlogController {
     // Ceci aussi est au niveau de /post/route directement. On ne passe pas de param donc j'ai pas mis :id, Du genre ceci c'est pour recuperer tous les blogs.
     this.router.get(`${this.path}/`, this.blogService.getAll);
 
+    this.router.get(`${this.path}/admin/list/`, this.blogService.getAdminList);
+
+    this.router.get(`${this.path}/by-categories/`, this.blogService.getByCategory);
+
+
     // ce GET c'est pour recup un bog par son Id en  fait. Genre on veut recuper un seul blog quoi. Tu sais qu ele Id est unique non
     this.router.get(
       `${this.path}/:id`,

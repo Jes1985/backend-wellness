@@ -13,7 +13,7 @@ const ERROR_MESSAGES = {
 class ChatService {
   Chat = Chat;
 
-  async listUser(req, res, next){
+  async listUser(req, res, next) {
     const session = "user";
 
     if (session) {
@@ -21,7 +21,7 @@ class ChatService {
         const senderList = await Chat.distinct('sender', {
           recipient: session.user.id,
         });
-  
+
         const users = await User.aggregate([
           {
             $match: { _id: { $in: senderList } },
@@ -108,7 +108,7 @@ class ChatService {
             $sort: { 'lastMessage.createdAt': -1 },
           },
         ]);
-  
+
         return new Response(JSON.stringify(users), { status: 201 });
       } catch (error) {
         console.log(error);
@@ -122,7 +122,7 @@ class ChatService {
     }
   }
 
-  async getAll(req, res, next){
+  async getAll(req, res, next) {
     const session = "user"
 
     if (session) {
@@ -132,7 +132,7 @@ class ChatService {
         })
           .populate('sender', 'username')
           .sort({ createdAt: -1 });
-  
+
         const Chats = await Chat.find({});
         const total = await Chat.countDocuments({
           isRead: false,
@@ -153,19 +153,19 @@ class ChatService {
     }
   }
 
-  async create(req, res, next){
+  async create(req, res, next) {
     const session = "user"
 
     if (session) {
       const { content, recipient } = await req.json();
-  
+
       try {
         const chat = new Chat({
           sender: session.user.id,
           content,
           recipient,
         });
-  
+
         await chat.save();
         const chatUser = await Chat.findById(chat._id).populate(
           'sender',
@@ -184,8 +184,8 @@ class ChatService {
     }
   }
 
-  async update(req, res, next){
-    const session = "user"  
+  async update(req, res, next) {
+    const session = "user"
 
     if (session) {
       try {
@@ -206,9 +206,9 @@ class ChatService {
       );
     }
   }
-  
-  async getById(req, res, next){
-    const session = "user"  
+
+  async getById(req, res, next) {
+    const session = "user"
 
     const id = req.params.id;
 
@@ -222,7 +222,7 @@ class ChatService {
         })
           .populate('sender', 'username')
           .sort({ createdAt: 1 });
-  
+
         return new Response(JSON.stringify(Chats), {
           status: 201,
         });
@@ -238,33 +238,64 @@ class ChatService {
     }
   }
 
-  async updateById(req, res, next){
-    const session = "user"  
+  async updateById(req, res, next) {
+    const session = "user"
 
 
-  if (session) {
-    try {
-      const chat = await Chat.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: {
-            isRead: true,
+    if (session) {
+      try {
+        const chat = await Chat.findByIdAndUpdate(
+          req.params.id,
+          {
+            $set: {
+              isRead: true,
+            },
           },
-        },
-        { new: true }
+          { new: true }
+        );
+        return new Response(JSON.stringify(chat), { status: 201 });
+      } catch (error) {
+        console.log(error);
+        return new Response('Erreur de mise a jour', { status: 500 });
+      }
+    } else {
+      return new Response(
+        'Vous devez vous connecter pour effectuer cette action',
+        { status: 401 }
       );
-      return new Response(JSON.stringify(chat), { status: 201 });
-    } catch (error) {
-      console.log(error);
-      return new Response('Erreur de mise a jour', { status: 500 });
     }
-  } else {
-    return new Response(
-      'Vous devez vous connecter pour effectuer cette action',
-      { status: 401 }
-    );
   }
+
+  async getAllChatUser(req, res, next) {
+    const session = "user"
+
+    if (session) {
+      try {
+        const Chats = await Chat.find({
+          $or: [{ recipient: session.user.id }, { sender: session.user.id }],
+        })
+          .populate('sender', 'username')
+          .limit(8);
+
+        const total = await Chat.countDocuments({
+          $or: [{ recipient: session.user.id }, { sender: session.user.id }],
+        });
+
+        return new Response(JSON.stringify({ Chats, total }), {
+          status: 201,
+        });
+      } catch (error) {
+        console.log(error);
+        return new Response('Erreur de creation de service', { status: 500 });
+      }
+    } else {
+      return new Response(
+        'Vous devez vous connecter pour effectuer cette action',
+        { status: 401 }
+      );
+    }
   }
+
 }
 
 module.exports = ChatService;

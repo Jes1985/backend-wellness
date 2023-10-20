@@ -6,6 +6,9 @@ dbConnect();
 
 const ERROR_MESSAGES = {
   CREATION_ERROR: 'Erreur de donnée',
+  NOT_LOGGED_IN: 'Vous devez vous connecter pour effectuer cette opération',
+  SERVICE_NOT_FOUND: 'Aucun service trouvé',
+  UNAUTHORIZED: `Vous n'êtes pas autorisé à effectuer cette opération`,
 };
 
 class ServiceService {
@@ -15,7 +18,7 @@ class ServiceService {
     const session = "user"
 
     try {
-      const service = await Service.findById(params.id).populate('user');
+      const service = await Service.findById(req.params.id).populate('user');
   
       if (!service) return new Response('Aucun service trouvé', { status: 404 });
   
@@ -81,7 +84,7 @@ class ServiceService {
           `Vous devez vous connecter pour effectuer cette opération`
         );
       }
-      const existingService = await Service.findById(params.id);
+      const existingService = await Service.findById(req.params.id);
 
       if (!existingService) {
         throw new Error('Aucun service trouvé', { status: 404 });
@@ -115,7 +118,7 @@ class ServiceService {
         throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
       }
   
-      const existingService = await Service.findById(params.id);
+      const existingService = await Service.findById(req.params.id);
       // Vérifier si le service existe
       if (!existingService) {
         throw new Error(ERROR_MESSAGES.SERVICE_NOT_FOUND, { status: 404 });
@@ -128,7 +131,7 @@ class ServiceService {
   
       const isPublish = !existingService.isPublish;
   
-      const service = await Service.findByIdAndUpdate(params.id, {
+      const service = await Service.findByIdAndUpdate(req.params.id, {
         $set: { isPublish },
       });
   
@@ -150,7 +153,7 @@ class ServiceService {
         throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
       }
   
-      const existingService = await Service.findById(params.id);
+      const existingService = await Service.findById(req.params.id);
       // Vérifier si le service existe
       if (!existingService) {
         throw new Error(ERROR_MESSAGES.SERVICE_NOT_FOUND, { status: 404 });
@@ -161,7 +164,7 @@ class ServiceService {
         throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
       }
   
-      await Service.findByIdAndDelete(params.id);
+      await Service.findByIdAndDelete(req.params.id);
   
       return new Response(
         JSON.stringify({ message: 'Service supprimé avec succès' }),
@@ -354,7 +357,7 @@ class ServiceService {
   
       try {
         const service = await Service.findByIdAndUpdate(
-          params.id,
+          req.params.id,
           {
             $set: {
               priceDetail: {
@@ -385,7 +388,7 @@ class ServiceService {
   
       try {
         const service = await Service.findByIdAndUpdate(
-          params.id,
+          req.params.id,
           {
             $push: {
               supOption: options,
@@ -413,7 +416,7 @@ class ServiceService {
   
       try {
         const service = await Service.findByIdAndUpdate(
-          params.id,
+          req.params.id,
           {
             $set: {
               serviceNote: serviceNote,
@@ -441,7 +444,7 @@ class ServiceService {
   
       try {
         const service = await Service.findByIdAndUpdate(
-          params.id,
+          req.params.id,
           {
             $set: {
               image: image,
@@ -628,7 +631,7 @@ class ServiceService {
         const services = await Service.find({
           isPublish: true,
           isValidate: true,
-          user: params.id,
+          user: req.params.id,
         }).populate('user');
         return new Response(JSON.stringify(services), {
           status: 200,
@@ -739,9 +742,9 @@ class ServiceService {
   async getSellerServices(req, res, next){
     try {
       const services = await Service.find({
-        user: params.id,
+        user: req.params.id,
       }).populate('user', 'username createdAt');
-      const user = await User.findById(params.id);
+      const user = await User.findById(req.params.id);
       const populatedServices = await Promise.all(
         services.map(async (service) => {
           let sellerProfile = null;
@@ -755,7 +758,7 @@ class ServiceService {
       );
   
       const profileSeller = await Profil.findOne({
-        user: params.id,
+        user: req.params.id,
       }).populate('user', 'username createdAt');
   
       const responseData = {
@@ -769,6 +772,64 @@ class ServiceService {
     } catch (error) {
       console.error(error);
       return new Response('Erreur de serveur', { status: 500 });
+    }
+  }
+
+  async updateAdminValidate(req, res, next){
+    const session = "user"
+
+    try {
+      if (session && session.user && !session.user.isAdmin) {
+        throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+      }
+  
+      const existingService = await Service.findById(req.params.id);
+  
+      if (!existingService) {
+        throw new Error(ERROR_MESSAGES.SERVICE_NOT_FOUND, { status: 404 });
+      }
+  
+      const isValidate = !existingService.isValidate;
+  
+      const service = await Service.findByIdAndUpdate(req.params.id, {
+        $set: { isValidate },
+      });
+  
+      return new Response(JSON.stringify(service), {
+        status: 200,
+      });
+    } catch (error) {
+      console.log(error);
+      return new Response(error, { status: 500 });
+    }
+  }
+
+  async deleteAdminValidate(req, res, next){
+    const session = "user"
+
+    try {
+      // Vérifier si l'utilisateur est connecté
+      if (session && session.user && !session.user.isAdmin) {
+        throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+      }
+  
+      const existingService = await Service.findById(req.params.id);
+      // Vérifier si le service existe
+      if (!existingService) {
+        throw new Error(ERROR_MESSAGES.SERVICE_NOT_FOUND, { status: 404 });
+      }
+  
+      await Service.findByIdAndDelete(req.params.id);
+  
+      return new Response(
+        JSON.stringify({ message: 'Service supprimé avec succès' }),
+        {
+          status: 200,
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      return new Response(error, { status: 500 });
     }
   }
   

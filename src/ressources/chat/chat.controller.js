@@ -21,9 +21,17 @@ class ChatController {
 
     this.router.get(`${this.path}/`, this.chatService.getAll);
 
-    this.router.post(`${this.path}/`, this.chatService.create);
+    this.router.post(
+      `${this.path}/`, 
+      zodValidator(updateChat),
+      this.chatService.create
+    );
 
-    this.router.put(`${this.path}/`, this.chatService.update);
+    this.router.put(
+      `${this.path}/`, 
+      zodValidator(updateChat),
+      this.chatService.update
+    );
 
     this.router.get(
       `${this.path}/:id`,
