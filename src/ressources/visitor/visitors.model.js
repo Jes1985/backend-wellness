@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const visitorSchema = new mongoose.Schema(
   {
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: "User",
     },
     userAgent: {
       type: String,
@@ -27,5 +27,5 @@ const visitorSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.Visitor ||
-  mongoose.model('Visitor', visitorSchema);
+module.exports =
+  mongoose.models.Visitor || mongoose.model("Visitor", visitorSchema);

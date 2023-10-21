@@ -1,11 +1,10 @@
-import mongoose from 'mongoose';
-
+const mongoose = require("mongoose");
 const ServiceSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: "User",
     },
 
     title: {
@@ -78,7 +77,7 @@ const ServiceSchema = new mongoose.Schema(
         user: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
-          ref: 'User',
+          ref: "User",
         },
         name: {
           type: String,
@@ -86,7 +85,7 @@ const ServiceSchema = new mongoose.Schema(
         },
         text: {
           type: String,
-          requiered: [true, 'Saisissez votre commentaire svp!'],
+          requiered: [true, "Saisissez votre commentaire svp!"],
         },
         star: {
           type: Number,
@@ -111,7 +110,7 @@ const ServiceSchema = new mongoose.Schema(
     favorites: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
       },
     ],
     reset_code: {
@@ -121,5 +120,5 @@ const ServiceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.Service ||
-  mongoose.model('Service', ServiceSchema);
+module.exports =
+  mongoose.models.Service || mongoose.model("Service", ServiceSchema);

@@ -2,8 +2,6 @@ const Blog = require("./blog.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
 
-dbConnect();
-
 const ERROR_MESSAGES = {
   CREATION_ERROR: "Erreur de donnée",
 };

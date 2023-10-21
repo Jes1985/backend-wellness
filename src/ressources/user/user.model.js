@@ -1,18 +1,17 @@
-import mongoose from 'mongoose';
-
+const mongoose = require("mongoose");
 const UserSchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      required: [true, 'Entrez votre nom svp!'],
+      required: [true, "Entrez votre nom svp!"],
     },
     email: {
       type: String,
-      required: [true, 'Entrez votre email svp!'],
+      required: [true, "Entrez votre email svp!"],
     },
     password: {
       type: String,
-      required: [true, 'Entrez votre mot de passe svp!'],
+      required: [true, "Entrez votre mot de passe svp!"],
     },
     image: {
       type: String,
@@ -33,13 +32,14 @@ const UserSchema = new mongoose.Schema(
     favoriteServices: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
       },
     ],
   },
   { timestamps: true }
 );
 
-// export default mongoose.models.User || mongoose.model('User', UserSchema);
+// module.exports =
+mongoose.models.User || mongoose.model("User", UserSchema);
 
-export default mongoose.models.User || mongoose.model('User', UserSchema);
+module.exports = mongoose.models.User || mongoose.model("User", UserSchema);

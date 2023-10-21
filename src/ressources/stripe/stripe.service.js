@@ -4,8 +4,6 @@ const Order = require("../order/order.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
 
-dbConnect();
-
 const ERROR_MESSAGES = {
   CREATION_ERROR: "Erreur de donnée",
 };
@@ -39,7 +37,7 @@ class StripeService {
 
     if (!userSession) {
       return NextResponse.json({
-        message: 'Vous devez vous connecter pour effectuer cette action.',
+        message: "Vous devez vous connecter pour effectuer cette action.",
       });
     }
 
@@ -49,8 +47,8 @@ class StripeService {
       const account = await stripe.accounts.retrieve(user.stripe_account_id);
 
       const sellerInfo = {
-        name: account.business_profile.name || '',
-        email: account.email || '',
+        name: account.business_profile.name || "",
+        email: account.email || "",
         card:
           account.external_accounts.data.length > 0
             ? account.external_accounts.data[0].card
@@ -58,7 +56,7 @@ class StripeService {
       };
 
       if (!account) {
-        throw new Error('Aucun compte trouvé.');
+        throw new Error("Aucun compte trouvé.");
       }
       // return new Response(JSON.stringify(sellerInfo), { status: 200 });
       return NextResponse.json(sellerInfo);
@@ -72,7 +70,7 @@ class StripeService {
 
     if (!userSession) {
       return NextResponse.json({
-        message: 'Vous devez vous connecter pour effectuer cette action.',
+        message: "Vous devez vous connecter pour effectuer cette action.",
       });
     }
 
@@ -94,7 +92,7 @@ class StripeService {
 
     if (!userSession) {
       return NextResponse.json({
-        message: 'Vous devez vous connecter pour effectuer cette action.',
+        message: "Vous devez vous connecter pour effectuer cette action.",
       });
     }
 
@@ -113,8 +111,8 @@ class StripeService {
 
       const paymentIntent = await stripe.paymentIntents.create({
         amount: order.optionpement.amount * 100,
-        currency: 'eur',
-        capture_method: 'manual',
+        currency: "eur",
+        capture_method: "manual",
         automatic_payment_methods: {
           enabled: true,
         },
@@ -127,12 +125,12 @@ class StripeService {
       const updateOrder = await Order.findByIdAndUpdate(
         id,
         {
-          $set: { 'optionpement.id': paymentIntent.id },
+          $set: { "optionpement.id": paymentIntent.id },
         },
         { new: true }
       );
 
-      console.log('updateOrder', updateOrder, paymentIntent.id);
+      console.log("updateOrder", updateOrder, paymentIntent.id);
       // await User.findByIdAndUpdate(userSession.id);
 
       return NextResponse.json({ clientSecret: paymentIntent.client_secret });
@@ -146,7 +144,7 @@ class StripeService {
 
     if (!userSession) {
       return NextResponse.json({
-        message: 'Vous devez vous connecter pour effectuer cette action.',
+        message: "Vous devez vous connecter pour effectuer cette action.",
       });
     }
 
@@ -164,8 +162,8 @@ class StripeService {
       const fee = ((order.price * 10) / 100).toFixed(2);
       const paymentIntent = await stripe.paymentIntents.create({
         amount: order.price * 100,
-        currency: 'eur',
-        capture_method: 'manual',
+        currency: "eur",
+        capture_method: "manual",
         automatic_payment_methods: {
           enabled: true,
         },
@@ -193,9 +191,7 @@ class StripeService {
   }
 
   async getPayement(req, res, next) {
-
     return NextResponse.json({ publishable: process.env.STRIPE_PUBLIC_KEY });
-
   }
 
   async createPaymentSettings(req, res, next) {
@@ -203,7 +199,7 @@ class StripeService {
 
     if (!userSession) {
       return NextResponse.json({
-        message: 'Vous devez vous connecter pour effectuer cette action.',
+        message: "Vous devez vous connecter pour effectuer cette action.",
       });
     }
 
@@ -226,7 +222,7 @@ class StripeService {
 
     if (!userSession) {
       return NextResponse.json({
-        message: 'Vous devez vous connecter pour effectuer cette action.',
+        message: "Vous devez vous connecter pour effectuer cette action.",
       });
     }
 
@@ -241,7 +237,7 @@ class StripeService {
           stripe_seller: accounts,
         },
         { new: true }
-      ).select('-password');
+      ).select("-password");
       return new Response(JSON.stringify(updateUser), { status: 200 });
     }
   }
@@ -260,7 +256,7 @@ class StripeService {
       return NextResponse.json(portal.url);
     } catch (err) {
       console.log(err);
-      return new Response('Internal Server Error', { status: 500 });
+      return new Response("Internal Server Error", { status: 500 });
     }
   }
 
@@ -272,8 +268,8 @@ class StripeService {
 
       const subs = await stripe.subscriptions.list({
         customer: user.stripe_cumtomer_id,
-        status: 'all',
-        expand: ['data.default_payment_method'],
+        status: "all",
+        expand: ["data.default_payment_method"],
       });
 
       const updated = await User.findByIdAndUpdate(
@@ -287,18 +283,17 @@ class StripeService {
       return NextResponse.json(updated);
     } catch (err) {
       console.log(err);
-      return new Response('Internal Server Error', { status: 500 });
+      return new Response("Internal Server Error", { status: 500 });
     }
   }
 
   async getSubscriptionPlan(req, res, next) {
-
     try {
       const price = await stripe.prices.list();
       return NextResponse.json(price.data.reverse());
     } catch (err) {
       console.log(err);
-      return new Response('Internal Server Error', { status: 500 });
+      return new Response("Internal Server Error", { status: 500 });
     }
   }
 
@@ -311,8 +306,8 @@ class StripeService {
         const user = await User.findById(session.id);
 
         const StripeSession = await stripe.checkout.sessions.create({
-          mode: 'subscription',
-          payment_method_types: ['card'],
+          mode: "subscription",
+          payment_method_types: ["card"],
           line_items: [{ price: priceId, quantity: 1 }],
           customer: user.stripe_customer_id,
           success_url: process.env.SUCCESS_URL,
@@ -322,11 +317,11 @@ class StripeService {
         return NextResponse.json(StripeSession.url);
       } catch (err) {
         console.log(err);
-        return new Response('Internal Server Error', { status: 500 });
+        return new Response("Internal Server Error", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
@@ -340,14 +335,14 @@ class StripeService {
 
       const subs = await stripe.subscriptions.list({
         customer: user.stripe_cumtomer_id,
-        status: 'all',
-        expand: ['data.default_payment_method'],
+        status: "all",
+        expand: ["data.default_payment_method"],
       });
 
       return NextResponse.json(subs);
     } catch (err) {
       console.log(err);
-      return new Response('Internal Server Error', { status: 500 });
+      return new Response("Internal Server Error", { status: 500 });
     }
   }
 
@@ -356,7 +351,7 @@ class StripeService {
 
     if (!userSession) {
       return NextResponse.json({
-        message: 'Vous devez vous connecter pour effectuer cette action.',
+        message: "Vous devez vous connecter pour effectuer cette action.",
       });
     }
 
@@ -371,7 +366,7 @@ class StripeService {
           stripe_seller: accounts,
         },
         { new: true }
-      ).select('-password');
+      ).select("-password");
       return new Response(JSON.stringify(updateUser), { status: 200 });
     }
   }
@@ -381,7 +376,7 @@ class StripeService {
 
     if (!userSession) {
       return NextResponse.json({
-        message: 'Vous devez vous connecter pour effectuer cette action.',
+        message: "Vous devez vous connecter pour effectuer cette action.",
       });
     }
 
@@ -389,7 +384,7 @@ class StripeService {
 
     if (!user.stripe_account_id) {
       const account = await stripe.accounts.create({
-        type: 'standard',
+        type: "standard",
       });
 
       user.stripe_account_id = account.id;
@@ -400,11 +395,11 @@ class StripeService {
       account: user.stripe_account_id,
       refresh_url: `${process.env.URL}/stripe/callback`,
       return_url: `${process.env.URL}/admin/services-list`,
-      type: 'account_onboarding',
+      type: "account_onboarding",
     });
 
     accountLink = Object.assign(accountLink, {
-      'stripe_user[email]': user.email || undefined,
+      "stripe_user[email]": user.email || undefined,
     });
 
     const link = `${accountLink.url}?${queryString.stringify(accountLink)}`;
@@ -416,7 +411,7 @@ class StripeService {
 
     if (!userSession) {
       return NextResponse.json({
-        message: 'Vous devez vous connecter pour effectuer cette action.',
+        message: "Vous devez vous connecter pour effectuer cette action.",
       });
     }
 
@@ -424,7 +419,7 @@ class StripeService {
 
     if (!user.stripe_account_id) {
       const account = await stripe.accounts.create({
-        type: 'standard',
+        type: "standard",
       });
 
       user.stripe_account_id = account.id;
@@ -435,11 +430,11 @@ class StripeService {
       account: user.stripe_account_id,
       refresh_url: `${process.env.URL}stripe/callback`,
       return_url: `${process.env.URL}admin/services-list`,
-      type: 'account_onboarding',
+      type: "account_onboarding",
     });
 
     accountLink = Object.assign(accountLink, {
-      'stripe_user[email]': user.email || undefined,
+      "stripe_user[email]": user.email || undefined,
     });
 
     const link = `${accountLink.url}?${queryString.stringify(accountLink)}`;

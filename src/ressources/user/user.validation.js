@@ -8,7 +8,7 @@ const createUser = z.object({
   }),
 });
 
-const updateusername = z.object({
+const updateUser = z.object({
   body: z.object({
     user: z.string().optional(),
     email: z.string().optional(),
@@ -16,7 +16,7 @@ const updateusername = z.object({
   }),
   params: z.object({
     id: z.string(),
-  })
+  }),
 });
 
 const getUser = z.object({

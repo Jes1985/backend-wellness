@@ -1,11 +1,10 @@
-import mongoose from 'mongoose';
-
+const mongoose = require("mongoose");
 const MangouserSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: "User",
     },
     ClienId: {
       type: String,
@@ -116,5 +115,5 @@ const MangouserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.Mangouser ||
-  mongoose.model('Mangouser', MangouserSchema);
+module.exports =
+  mongoose.models.Mangouser || mongoose.model("Mangouser", MangouserSchema);

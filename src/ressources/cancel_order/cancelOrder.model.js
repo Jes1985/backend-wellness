@@ -1,18 +1,18 @@
-import mongoose from 'mongoose';
+const mongoose = require("mongoose");
 
 const cancelOrderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
   },
   orderId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Order',
+    ref: "Order",
     required: true,
   },
   sellerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true,
   },
   reason: {
@@ -21,8 +21,8 @@ const cancelOrderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['en attente', 'approuvée', 'rejetée'],
-    default: 'en attente',
+    enum: ["en attente", "approuvée", "rejetée"],
+    default: "en attente",
   },
   createdAt: {
     type: Date,
@@ -30,5 +30,6 @@ const cancelOrderSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.CancelOrder ||
-  mongoose.model('CancelOrder', cancelOrderSchema);
+module.exports =
+  mongoose.models.CancelOrder ||
+  mongoose.model("CancelOrder", cancelOrderSchema);

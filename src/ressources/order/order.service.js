@@ -4,8 +4,6 @@ const Service = require("../service/service.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
 
-dbConnect();
-
 const ERROR_MESSAGES = {
   CREATION_ERROR: "Erreur de donnée",
 };
@@ -71,8 +69,7 @@ class OrderService {
     const session = req.user;
 
     if (session) {
-      const { cart, FirstName, LastName, AddressLine1, Email } =
-        await req.body;
+      const { cart, FirstName, LastName, AddressLine1, Email } = await req.body;
 
       let serviceCust = [];
 

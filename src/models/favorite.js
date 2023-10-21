@@ -1,20 +1,19 @@
-import mongoose from 'mongoose';
-
+const mongoose = require("mongoose");
 const FavoriteSchema = new mongoose.Schema(
   {
     service: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'Service',
+      ref: "Service",
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: "User",
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.models.Favorite ||
-  mongoose.model('Favorite', FavoriteSchema);
+module.exports =
+  mongoose.models.Favorite || mongoose.model("Favorite", FavoriteSchema);

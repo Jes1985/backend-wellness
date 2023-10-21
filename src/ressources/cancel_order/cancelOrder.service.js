@@ -1,10 +1,7 @@
 const CancelOrder = require("./cancelOrder.model");
 const Chat = require("../chat/chat.model");
-const Order = require("../orders/order.model");
-const HttpException = require("../../utils/exceptions/http.exception");
+const Order = require("../order/order.model");
 const { dbConnect } = require("../../config/dbConnect");
-
-dbConnect();
 
 const ERROR_MESSAGES = {
   CREATION_ERROR: "Erreur de donnée",

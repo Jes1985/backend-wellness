@@ -21,7 +21,7 @@ class App {
     this.initializeDatabase();
   }
 
-  initializeDatabase = () => {
+  initializeDatabase = async () => {
     dbConnect();
   };
   initializeMiddleware = () => {

@@ -1,11 +1,10 @@
-import mongoose from 'mongoose';
-
+const mongoose = require("mongoose");
 const PLanSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: "User",
     },
     ClienId: {
       type: String,
@@ -104,4 +103,4 @@ const PLanSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.PLan || mongoose.model('PLan', PLanSchema);
+module.exports = mongoose.models.PLan || mongoose.model("PLan", PLanSchema);

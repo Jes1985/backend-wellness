@@ -1,9 +1,7 @@
 const Service = require("./service.model");
-const User = require("../user/user.model")
+const User = require("../user/user.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
-
-dbConnect();
 
 const ERROR_MESSAGES = {
   CREATION_ERROR: "Erreur de donnée",
@@ -689,11 +687,11 @@ class ServiceService {
 
     const search = keywords
       ? {
-        title: {
-          $regex: keywords,
-          $options: "i",
-        },
-      }
+          title: {
+            $regex: keywords,
+            $options: "i",
+          },
+        }
       : {};
 
     const total = await Service.countDocuments({

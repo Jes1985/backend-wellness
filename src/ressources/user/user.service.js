@@ -5,8 +5,6 @@ const { dbConnect } = require("../../config/dbConnect");
 const { hashPassword } = require("../../utils/auth.util");
 const jwt = require("jsonwebtoken");
 
-dbConnect();
-
 const ERROR_MESSAGES = {
   CREATION_ERROR: "Erreur de donnée",
 };

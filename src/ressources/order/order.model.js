@@ -1,21 +1,21 @@
-import mongoose from 'mongoose';
+const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: "User",
     },
     serviceId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'Service',
+      ref: "Service",
     },
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: "User",
     },
     price: {
       type: Number,
@@ -44,7 +44,7 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: 'En attente',
+      default: "En attente",
     },
     ispaid: {
       type: Boolean,
@@ -90,4 +90,4 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.Order || mongoose.model('Order', orderSchema);
+module.exports = mongoose.models.Order || mongoose.model("Order", orderSchema);

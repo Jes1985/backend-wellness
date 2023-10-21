@@ -4,8 +4,6 @@ const { verifyPassword } = require("../../utils/auth.util");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-dbConnect();
-
 class AuthService {
   async oAuthLogin(req, res, next) {
     const { email, password } = req.body;

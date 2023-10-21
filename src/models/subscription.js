@@ -1,11 +1,10 @@
-import mongoose from 'mongoose';
-
+const mongoose = require("mongoose");
 const SubscriptionSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: "User",
     },
     packname: {
       type: String,
@@ -19,5 +18,6 @@ const SubscriptionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.Subscription ||
-  mongoose.model('Subscription', SubscriptionSchema);
+module.exports =
+  mongoose.models.Subscription ||
+  mongoose.model("Subscription", SubscriptionSchema);
