@@ -107,12 +107,14 @@ class CommentService {
         }
       }
 
-      return jsonResponse(JSON.stringify(service), {
-        status: 200,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(service), {
+          status: 200,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse("Erreur de serveur", { status: 500 });
+      return res.json(jsonResponse("Erreur de serveur", { status: 500 }));
     }
   }
 
@@ -153,14 +155,18 @@ class CommentService {
 
       // Sauvegarder les modifications du service
       await service.save();
-      return jsonResponse(JSON.stringify(service), {
-        status: 201,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(service), {
+          status: 201,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse("Erreur de suppression du commentaire", {
-        status: 500,
-      });
+      return res.json(
+        jsonResponse("Erreur de suppression du commentaire", {
+          status: 500,
+        })
+      );
     }
   }
 
@@ -182,12 +188,14 @@ class CommentService {
       );
 
       // Le commentaire de l'utilisateur existe
-      return jsonResponse(JSON.stringify(userComment), {
-        status: 200,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(userComment), {
+          status: 200,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse("Erreur de serveur", { status: 500 });
+      return res.json(jsonResponse("Erreur de serveur", { status: 500 }));
     }
   }
 
@@ -228,17 +236,20 @@ class CommentService {
             },
           },
         ]);
-        return jsonResponse(JSON.stringify(comments), {
-          status: 200,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify(comments), {
+            status: 200,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de serveur", { status: 500 });
+        return res.json(jsonResponse("Erreur de serveur", { status: 500 }));
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -267,17 +278,20 @@ class CommentService {
             ? serviceCommentCount[0].totalComments
             : 0;
 
-        return jsonResponse(JSON.stringify(totalComments), {
-          status: 200,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify(totalComments), {
+            status: 200,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de serveur", { status: 500 });
+        return res.json(jsonResponse("Erreur de serveur", { status: 500 }));
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -314,31 +328,30 @@ class CommentService {
 
         console.log({ positiveReview, negativeReviews, totalRating });
 
-        return jsonResponse(
-          JSON.stringify({
-            positiveReview,
-            negativeReviews,
-            totalRating,
-          }),
-          {
-            status: 200,
-          }
+        return res.json(
+          jsonResponse(
+            JSON.stringify({
+              positiveReview,
+              negativeReviews,
+              totalRating,
+            }),
+            {
+              status: 200,
+            }
+          )
         );
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de serveur", { status: 500 });
+        return res.json(jsonResponse("Erreur de serveur", { status: 500 }));
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
 }
 
 module.exports = CommentService;
-
-// async getSellerComments(req, res, next) {
-//   const session = req.user
-// }

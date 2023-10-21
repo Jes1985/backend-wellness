@@ -21,7 +21,7 @@ class ServiceService {
       const service = await Service.findById(req.params.id).populate("user");
 
       if (!service)
-        return jsonResponse("Aucun service trouvé", { status: 404 });
+        return res.json(jsonResponse("Aucun service trouvé", { status: 404 }));
 
       const user = await User.findById(service.user._id).select("-password");
 
@@ -63,14 +63,16 @@ class ServiceService {
         })
       );
 
-      return jsonResponse(
-        JSON.stringify({ service, services: populatedServices, user }),
-        {
-          status: 200,
-        }
+      return res.json(
+        jsonResponse(
+          JSON.stringify({ service, services: populatedServices, user }),
+          {
+            status: 200,
+          }
+        )
       );
     } catch (error) {
-      return jsonResponse("Internal Server Error", { status: 500 });
+      return res.json(jsonResponse("Internal Server Error", { status: 500 }));
     }
   }
 
@@ -100,12 +102,14 @@ class ServiceService {
 
       await existingService.save();
 
-      return jsonResponse(JSON.stringify(existingService), {
-        status: 200,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(existingService), {
+          status: 200,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse(error, { status: 500 });
+      return res.json(jsonResponse(error, { status: 500 }));
     }
   }
 
@@ -135,12 +139,14 @@ class ServiceService {
         $set: { isPublish },
       });
 
-      return jsonResponse(JSON.stringify(service), {
-        status: 200,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(service), {
+          status: 200,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse(error, { status: 500 });
+      return res.json(jsonResponse(error, { status: 500 }));
     }
   }
 
@@ -166,15 +172,17 @@ class ServiceService {
 
       await Service.findByIdAndDelete(req.params.id);
 
-      return jsonResponse(
-        JSON.stringify({ message: "Service supprimé avec succès" }),
-        {
-          status: 200,
-        }
+      return res.json(
+        jsonResponse(
+          JSON.stringify({ message: "Service supprimé avec succès" }),
+          {
+            status: 200,
+          }
+        )
       );
     } catch (error) {
       console.log(error);
-      return jsonResponse(error, { status: 500 });
+      return res.json(jsonResponse(error, { status: 500 }));
     }
   }
 
@@ -199,17 +207,22 @@ class ServiceService {
 
         const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
 
-        return jsonResponse(JSON.stringify({ services, pages, total }), {
-          status: 200,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify({ services, pages, total }), {
+            status: 200,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse("Failed to fetch all prompts", { status: 500 });
+        return res.json(
+          jsonResponse("Failed to fetch all prompts", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -269,7 +282,7 @@ class ServiceService {
         .limit(limit);
 
       if (!services)
-        return jsonResponse("Aucun service trouvé", { status: 404 });
+        return res.json(jsonResponse("Aucun service trouvé", { status: 404 }));
 
       const populatedServices = await Promise.all(
         services.map(async (service) => {
@@ -285,14 +298,16 @@ class ServiceService {
 
       const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
 
-      return jsonResponse(
-        JSON.stringify({ service: populatedServices, pages, total }),
-        {
-          status: 200,
-        }
+      return res.json(
+        jsonResponse(
+          JSON.stringify({ service: populatedServices, pages, total }),
+          {
+            status: 200,
+          }
+        )
       );
     } catch (error) {
-      return jsonResponse("Internal Server Error", { status: 500 });
+      return res.json(jsonResponse("Internal Server Error", { status: 500 }));
     }
   }
 
@@ -312,14 +327,17 @@ class ServiceService {
         });
 
         await service.save();
-        return jsonResponse(JSON.stringify(service), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(service), { status: 201 }));
       } catch (error) {
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -340,14 +358,17 @@ class ServiceService {
         });
 
         await service.save();
-        return jsonResponse(JSON.stringify(service), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(service), { status: 201 }));
       } catch (error) {
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -371,14 +392,17 @@ class ServiceService {
           },
           { new: true }
         );
-        return jsonResponse(JSON.stringify(service), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(service), { status: 201 }));
       } catch (error) {
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -399,14 +423,17 @@ class ServiceService {
           },
           { new: true }
         );
-        return jsonResponse(JSON.stringify(service), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(service), { status: 201 }));
       } catch (error) {
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -427,14 +454,17 @@ class ServiceService {
           },
           { new: true }
         );
-        return jsonResponse(JSON.stringify(service), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(service), { status: 201 }));
       } catch (error) {
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -456,14 +486,17 @@ class ServiceService {
           },
           { new: true }
         );
-        return jsonResponse(JSON.stringify(service), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(service), { status: 201 }));
       } catch (error) {
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -489,9 +522,11 @@ class ServiceService {
           });
 
           console.log(service, userUpdated);
-          return jsonResponse(JSON.stringify("Service ajouté aux favoris"), {
-            status: 201,
-          });
+          return res.json(
+            jsonResponse(JSON.stringify("Service ajouté aux favoris"), {
+              status: 201,
+            })
+          );
         } else {
           // Le service est déjà dans les favoris, donc le supprimer
           const removeuserF = await User.findByIdAndUpdate(session.id, {
@@ -501,18 +536,21 @@ class ServiceService {
           const removeService = await Service.findByIdAndUpdate(serviceId, {
             $pull: { favorites: session.id },
           });
-          return jsonResponse(JSON.stringify("Service supprimé des favoris"), {
-            status: 201,
-          });
+          return res.json(
+            jsonResponse(JSON.stringify("Service supprimé des favoris"), {
+              status: 201,
+            })
+          );
         }
       } catch (error) {
         console.log(error);
         return { success: false, message: "Une erreur est survenue" };
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -554,20 +592,23 @@ class ServiceService {
         });
 
         const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
-        return jsonResponse(
-          JSON.stringify({ service: populatedServices, total, pages }),
-          {
-            status: 201,
-          }
+        return res.json(
+          jsonResponse(
+            JSON.stringify({ service: populatedServices, total, pages }),
+            {
+              status: 201,
+            }
+          )
         );
       } catch (error) {
         console.log(error);
         return { success: false, message: "Une erreur est survenue" };
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -589,10 +630,14 @@ class ServiceService {
           return { ...service._doc, profil: sellerProfile };
         })
       );
-      return jsonResponse(JSON.stringify(populatedServices), { status: 200 });
+      return res.json(
+        jsonResponse(JSON.stringify(populatedServices), { status: 200 })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse("Failed to fetch all prompts", { status: 500 });
+      return res.json(
+        jsonResponse("Failed to fetch all prompts", { status: 500 })
+      );
     }
   }
 
@@ -616,11 +661,15 @@ class ServiceService {
           return { ...service._doc, profil: sellerProfile };
         })
       );
-      return jsonResponse(JSON.stringify(populatedServices), { status: 200 });
+      return res.json(
+        jsonResponse(JSON.stringify(populatedServices), { status: 200 })
+      );
       // res.status(200).json(services);
     } catch (error) {
       console.log(error);
-      return jsonResponse("Failed to fetch all prompts", { status: 500 });
+      return res.json(
+        jsonResponse("Failed to fetch all prompts", { status: 500 })
+      );
     }
   }
 
@@ -634,16 +683,19 @@ class ServiceService {
           isValidate: true,
           user: req.params.id,
         }).populate("user");
-        return jsonResponse(JSON.stringify(services), {
-          status: 200,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify(services), {
+            status: 200,
+          })
+        );
       } catch (error) {
-        return jsonResponse("Internal Server Error", { status: 500 });
+        return res.json(jsonResponse("Internal Server Error", { status: 500 }));
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -669,11 +721,15 @@ class ServiceService {
 
       const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
 
-      return jsonResponse(JSON.stringify({ services, pages, total }), {
-        status: 200,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify({ services, pages, total }), {
+          status: 200,
+        })
+      );
     } catch (error) {
-      return jsonResponse("Failed to fetch all prompts", { status: 500 });
+      return res.json(
+        jsonResponse("Failed to fetch all prompts", { status: 500 })
+      );
     }
   }
 
@@ -729,14 +785,16 @@ class ServiceService {
 
       const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
 
-      return jsonResponse(
-        JSON.stringify({ service: populatedServices, pages, total }),
-        {
-          status: 200,
-        }
+      return res.json(
+        jsonResponse(
+          JSON.stringify({ service: populatedServices, pages, total }),
+          {
+            status: 200,
+          }
+        )
       );
     } catch (error) {
-      return jsonResponse("Internal Server Error", { status: 500 });
+      return res.json(jsonResponse("Internal Server Error", { status: 500 }));
     }
   }
 
@@ -767,12 +825,14 @@ class ServiceService {
         profileseller: profileSeller,
         user,
       };
-      return jsonResponse(JSON.stringify(responseData), {
-        status: 200,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(responseData), {
+          status: 200,
+        })
+      );
     } catch (error) {
       console.error(error);
-      return jsonResponse("Erreur de serveur", { status: 500 });
+      return res.json(jsonResponse("Erreur de serveur", { status: 500 }));
     }
   }
 
@@ -796,12 +856,14 @@ class ServiceService {
         $set: { isValidate },
       });
 
-      return jsonResponse(JSON.stringify(service), {
-        status: 200,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(service), {
+          status: 200,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse(error, { status: 500 });
+      return res.json(jsonResponse(error, { status: 500 }));
     }
   }
 
@@ -822,15 +884,17 @@ class ServiceService {
 
       await Service.findByIdAndDelete(req.params.id);
 
-      return jsonResponse(
-        JSON.stringify({ message: "Service supprimé avec succès" }),
-        {
-          status: 200,
-        }
+      return res.json(
+        jsonResponse(
+          JSON.stringify({ message: "Service supprimé avec succès" }),
+          {
+            status: 200,
+          }
+        )
       );
     } catch (error) {
       console.log(error);
-      return jsonResponse(error, { status: 500 });
+      return res.json(jsonResponse(error, { status: 500 }));
     }
   }
 }

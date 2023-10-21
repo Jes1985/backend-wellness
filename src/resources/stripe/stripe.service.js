@@ -30,7 +30,7 @@ class StripeService {
       stripeAccount: user.stripe_account_id,
     });
 
-    return jsonResponse(JSON.stringify(accounts), { status: 200 });
+    return res.json(jsonResponse(JSON.stringify(accounts), { status: 200 }));
   }
 
   async getCarteInfo(req, res, next) {
@@ -59,7 +59,7 @@ class StripeService {
       if (!account) {
         throw new Error("Aucun compte trouvé.");
       }
-      // return jsonResponse(JSON.stringify(sellerInfo), { status: 200 });
+      // return res.json(jsonResponse(JSON.stringify(sellerInfo), { status: 200 });
       return NextResponse.json(sellerInfo);
     } catch (error) {
       console.log(error);
@@ -85,7 +85,7 @@ class StripeService {
       },
     });
 
-    return jsonResponse(JSON.stringify(accounts), { status: 200 });
+    return res.json(jsonResponse(JSON.stringify(accounts), { status: 200 }));
   }
 
   async createOptionPayement(req, res, next) {
@@ -215,7 +215,7 @@ class StripeService {
       }
     );
 
-    return jsonResponse(JSON.stringify(accounts), { status: 200 });
+    return res.json(jsonResponse(JSON.stringify(accounts), { status: 200 }));
   }
 
   async createPayoutSettings(req, res, next) {
@@ -239,7 +239,9 @@ class StripeService {
         },
         { new: true }
       ).select("-password");
-      return jsonResponse(JSON.stringify(updateUser), { status: 200 });
+      return res.json(
+        jsonResponse(JSON.stringify(updateUser), { status: 200 })
+      );
     }
   }
 
@@ -257,7 +259,7 @@ class StripeService {
       return NextResponse.json(portal.url);
     } catch (err) {
       console.log(err);
-      return jsonResponse("Internal Server Error", { status: 500 });
+      return res.json(jsonResponse("Internal Server Error", { status: 500 }));
     }
   }
 
@@ -284,7 +286,7 @@ class StripeService {
       return NextResponse.json(updated);
     } catch (err) {
       console.log(err);
-      return jsonResponse("Internal Server Error", { status: 500 });
+      return res.json(jsonResponse("Internal Server Error", { status: 500 }));
     }
   }
 
@@ -294,7 +296,7 @@ class StripeService {
       return NextResponse.json(price.data.reverse());
     } catch (err) {
       console.log(err);
-      return jsonResponse("Internal Server Error", { status: 500 });
+      return res.json(jsonResponse("Internal Server Error", { status: 500 }));
     }
   }
 
@@ -318,12 +320,13 @@ class StripeService {
         return NextResponse.json(StripeSession.url);
       } catch (err) {
         console.log(err);
-        return jsonResponse("Internal Server Error", { status: 500 });
+        return res.json(jsonResponse("Internal Server Error", { status: 500 }));
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -343,7 +346,7 @@ class StripeService {
       return NextResponse.json(subs);
     } catch (err) {
       console.log(err);
-      return jsonResponse("Internal Server Error", { status: 500 });
+      return res.json(jsonResponse("Internal Server Error", { status: 500 }));
     }
   }
 
@@ -368,7 +371,9 @@ class StripeService {
         },
         { new: true }
       ).select("-password");
-      return jsonResponse(JSON.stringify(updateUser), { status: 200 });
+      return res.json(
+        jsonResponse(JSON.stringify(updateUser), { status: 200 })
+      );
     }
   }
 

@@ -28,14 +28,17 @@ class UserService {
         });
 
         await profile.save();
-        return jsonResponse(JSON.stringify(profile), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(profile), { status: 201 }));
       } catch (error) {
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -51,10 +54,10 @@ class UserService {
 
     try {
       const profil = await Profil.findOne({ user: session.id });
-      return jsonResponse(JSON.stringify(profil), { status: 200 });
+      return res.json(jsonResponse(JSON.stringify(profil), { status: 200 }));
     } catch (error) {
       console.log(error);
-      return jsonResponse("Erreur de profil", { status: 500 });
+      return res.json(jsonResponse("Erreur de profil", { status: 500 }));
     }
   }
 
@@ -78,10 +81,10 @@ class UserService {
 
         new: true,
       });
-      return jsonResponse(JSON.stringify(profile), { status: 200 });
+      return res.json(jsonResponse(JSON.stringify(profile), { status: 200 }));
     } catch (error) {
       console.log(error);
-      return jsonResponse("Erreur de profil", { status: 500 });
+      return res.json(jsonResponse("Erreur de profil", { status: 500 }));
     }
   }
 
@@ -101,14 +104,18 @@ class UserService {
       }
 
       const saveUser = await user.save();
-      return jsonResponse(JSON.stringify(saveUser), {
-        status: 200,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(saveUser), {
+          status: 200,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse(error.message, {
-        status: 500,
-      });
+      return res.json(
+        jsonResponse(error.message, {
+          status: 500,
+        })
+      );
     }
   }
 
@@ -136,10 +143,10 @@ class UserService {
 
       const saveUser = await user.save();
       console.log(passhash, saveUser);
-      return res.json(jsonResponse(saveUser, { status: 500 }));
+      return res.json(jsonResponse(JSON.stringify(saveUser), { status: 500 }));
     } catch (error) {
       console.log(error);
-      return jsonResponse("Erreur de serveur", { status: 500 });
+      return res.json(jsonResponse("Erreur de serveur", { status: 500 }));
     }
   }
 
@@ -148,12 +155,14 @@ class UserService {
     try {
       const user = await User.findById(session.id);
       console.log(user);
-      return jsonResponse(JSON.stringify(user), {
-        status: 200,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(user), {
+          status: 200,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse("Erreur de serveur", { status: 500 });
+      return res.json(jsonResponse("Erreur de serveur", { status: 500 }));
     }
   }
 }

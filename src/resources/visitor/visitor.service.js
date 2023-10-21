@@ -107,12 +107,14 @@ class VisitorService {
           visitorsPerM,
         };
 
-        return jsonResponse(JSON.stringify(stat), {
-          status: 200,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify(stat), {
+            status: 200,
+          })
+        );
       } catch (error) {
         console.log("erreur", error);
-        return jsonResponse("Internal Server Error", { status: 500 });
+        return res.json(jsonResponse("Internal Server Error", { status: 500 }));
       }
     }
   }

@@ -26,15 +26,18 @@ class OrderService {
           { new: true }
         );
 
-        return jsonResponse(JSON.stringify(oder), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(oder), { status: 201 }));
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de commande", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de commande", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -53,15 +56,16 @@ class OrderService {
         //   throw new Error(`Erreur: Vous n'etes pas autorisé a effectuer cette opération`);
         // }
 
-        return jsonResponse(JSON.stringify(oder), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(oder), { status: 201 }));
       } catch (error) {
         console.log(error);
-        return jsonResponse(`Erreur s'est produite`, { status: 500 });
+        return res.json(jsonResponse(`Erreur s'est produite`, { status: 500 }));
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -91,15 +95,18 @@ class OrderService {
         });
 
         await oder.save();
-        return jsonResponse(JSON.stringify(oder), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(oder), { status: 201 }));
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de commande", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de commande", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -131,17 +138,22 @@ class OrderService {
           .populate("serviceId")
           .sort({ createdAt: -1 });
 
-        return jsonResponse(JSON.stringify({ oder, pages, total }), {
-          status: 201,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify({ oder, pages, total }), {
+            status: 201,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de commande", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de commande", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -167,16 +179,19 @@ class OrderService {
           );
         }
         const service = await Service.findById(order.serviceId);
-        return jsonResponse(JSON.stringify({ order, service }), {
-          status: 201,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify({ order, service }), {
+            status: 201,
+          })
+        );
       } catch (error) {
-        return jsonResponse(error, { status: 500 });
+        return res.json(jsonResponse(error, { status: 500 }));
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -205,15 +220,18 @@ class OrderService {
           { new: true }
         );
 
-        return jsonResponse(JSON.stringify(oder), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(oder), { status: 201 }));
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de commande", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de commande", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -243,17 +261,22 @@ class OrderService {
 
         const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
 
-        return jsonResponse(JSON.stringify({ oder, total, pages }), {
-          status: 201,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify({ oder, total, pages }), {
+            status: 201,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de commande", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de commande", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -272,15 +295,18 @@ class OrderService {
           { new: true }
         );
 
-        return jsonResponse(JSON.stringify(oder), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(oder), { status: 201 }));
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de commande", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de commande", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -400,27 +426,33 @@ class OrderService {
       ]);
 
       if (response.length === 0) {
-        return jsonResponse(
-          JSON.stringify({
-            Ordercomplete,
-            OderPending,
-            averageResponseTime: `Pas d'échange`,
-          }),
-          {
-            status: 201,
-          }
+        return res.json(
+          jsonResponse(
+            JSON.stringify({
+              Ordercomplete,
+              OderPending,
+              averageResponseTime: `Pas d'échange`,
+            }),
+            {
+              status: 201,
+            }
+          )
         );
       } else {
         const { averageResponseTime } = response[0];
-        return jsonResponse(
-          JSON.stringify({ Ordercomplete, OderPending, averageResponseTime }),
-          {
-            status: 201,
-          }
+        return res.json(
+          jsonResponse(
+            JSON.stringify({ Ordercomplete, OderPending, averageResponseTime }),
+            {
+              status: 201,
+            }
+          )
         );
       }
     } catch (error) {
-      return jsonResponse("Erreur, aucune commande trouvé", { status: 500 });
+      return res.json(
+        jsonResponse("Erreur, aucune commande trouvé", { status: 500 })
+      );
     }
   }
 
@@ -543,26 +575,32 @@ class OrderService {
       const { averageResponseTime } = response[0];
 
       if (averageResponseTime === "0 secs") {
-        return jsonResponse(
-          JSON.stringify({
-            Ordercomplete,
-            OderPending,
-            averageResponseTime: `Pas d'échange`,
-          }),
-          {
-            status: 201,
-          }
+        return res.json(
+          jsonResponse(
+            JSON.stringify({
+              Ordercomplete,
+              OderPending,
+              averageResponseTime: `Pas d'échange`,
+            }),
+            {
+              status: 201,
+            }
+          )
         );
       } else {
-        return jsonResponse(
-          JSON.stringify({ Ordercomplete, OderPending, averageResponseTime }),
-          {
-            status: 201,
-          }
+        return res.json(
+          jsonResponse(
+            JSON.stringify({ Ordercomplete, OderPending, averageResponseTime }),
+            {
+              status: 201,
+            }
+          )
         );
       }
     } catch (error) {
-      return jsonResponse("Erreur, aucune commande trouvé", { status: 500 });
+      return res.json(
+        jsonResponse("Erreur, aucune commande trouvé", { status: 500 })
+      );
     }
   }
 
@@ -580,15 +618,18 @@ class OrderService {
         //   throw new Error(`Erreur: Vous n'etes pas autorisé a effectuer cette opération`);
         // }
 
-        return jsonResponse(JSON.stringify(oder), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(oder), { status: 201 }));
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur, aucune commande trouvé", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur, aucune commande trouvé", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -666,26 +707,31 @@ class OrderService {
         const totalYearlyRevenue =
           yearlyRevenue.length > 0 ? yearlyRevenue[0].revenue : 0;
 
-        return jsonResponse(
-          JSON.stringify({
-            yearlyRevenue: totalYearlyRevenue,
-            monthlyRevenue: revenueData,
-            monthLabels,
-            order,
-            finishedOrder,
-          }),
-          {
-            status: 201,
-          }
+        return res.json(
+          jsonResponse(
+            JSON.stringify({
+              yearlyRevenue: totalYearlyRevenue,
+              monthlyRevenue: revenueData,
+              monthLabels,
+              order,
+              finishedOrder,
+            }),
+            {
+              status: 201,
+            }
+          )
         );
       } catch (error) {
         console.error(error);
-        return jsonResponse("Erreur de recherche de commande", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de recherche de commande", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -706,15 +752,18 @@ class OrderService {
           { new: true }
         );
 
-        return jsonResponse(JSON.stringify(oder), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(oder), { status: 201 }));
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de commande", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de commande", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -842,15 +891,17 @@ class OrderService {
           status,
         };
 
-        return jsonResponse(
-          JSON.stringify({ moisAbreges, montantVentes, weekStat }),
-          {
-            status: 200,
-          }
+        return res.json(
+          jsonResponse(
+            JSON.stringify({ moisAbreges, montantVentes, weekStat }),
+            {
+              status: 200,
+            }
+          )
         );
       } catch (error) {
         console.log("erreur", error);
-        return jsonResponse("Internal Server Error", { status: 500 });
+        return res.json(jsonResponse("Internal Server Error", { status: 500 }));
       }
     }
   }

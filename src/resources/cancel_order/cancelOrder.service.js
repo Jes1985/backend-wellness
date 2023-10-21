@@ -63,17 +63,22 @@ class CancelOrderService {
           );
         }
 
-        return jsonResponse(JSON.stringify(orderCancel), {
-          status: 201,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify(orderCancel), {
+            status: 201,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse(`Une erreur s'est produite`, { status: 500 });
+        return res.json(
+          jsonResponse(`Une erreur s'est produite`, { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -86,19 +91,24 @@ class CancelOrderService {
     if (session) {
       try {
         const cancelOrder = await CancelOrder.findOne({ orderId: id });
-        return jsonResponse(JSON.stringify(cancelOrder), {
-          status: 201,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify(cancelOrder), {
+            status: 201,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse(`Erreur:Une erreur s'est produite`, {
-          status: 500,
-        });
+        return res.json(
+          jsonResponse(`Erreur:Une erreur s'est produite`, {
+            status: 500,
+          })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -144,17 +154,20 @@ class CancelOrderService {
 
         const data = await chat.save();
 
-        return jsonResponse(JSON.stringify({ data, orderCancel }), {
-          status: 201,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify({ data, orderCancel }), {
+            status: 201,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse(error, { status: 500 });
+        return res.json(jsonResponse(error, { status: 500 }));
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -204,17 +217,22 @@ class CancelOrderService {
           .limit(limit)
           .sort({ createdAt: -1 });
 
-        return jsonResponse(JSON.stringify({ cancelOrder, pages, total }), {
-          status: 201,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify({ cancelOrder, pages, total }), {
+            status: 201,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }

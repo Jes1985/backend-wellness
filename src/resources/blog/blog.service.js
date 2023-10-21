@@ -26,15 +26,18 @@ class BlogService {
         });
 
         await blog.save();
-        return jsonResponse(blog, 201);
+        return res.json(jsonResponse(blog, 201));
       } catch (error) {
         console.log(error);
-        return jsonResponse(undefined, 500, "Erreur de creation de service");
+        return res.json(
+          jsonResponse(undefined, 500, "Erreur de creation de service")
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -45,25 +48,32 @@ class BlogService {
         "username"
       );
 
-      if (!blog) return jsonResponse("Aucun service trouvé", { status: 404 });
+      if (!blog)
+        return res.json(jsonResponse("Aucun service trouvé", { status: 404 }));
 
-      return jsonResponse(JSON.stringify(blog), {
-        status: 200,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(blog), {
+          status: 200,
+        })
+      );
     } catch (error) {
-      return jsonResponse("Internal Server Error", { status: 500 });
+      return res.json(jsonResponse("Internal Server Error", { status: 500 }));
     }
   }
 
   async getAll(req, res, next) {
     try {
       const blog = await Blog.find({});
-      return jsonResponse(JSON.stringify(blog), {
-        status: 201,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(blog), {
+          status: 201,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse("Erreur de creation de service", { status: 500 });
+      return res.json(
+        jsonResponse("Erreur de creation de service", { status: 500 })
+      );
     }
   }
 
@@ -80,11 +90,13 @@ class BlogService {
         );
       }
       const blog = await Blog.findByIdAndDelete(req.params.id);
-      return jsonResponse("Blog supprimer avec success", {
-        status: 200,
-      });
+      return res.json(
+        jsonResponse("Blog supprimer avec success", {
+          status: 200,
+        })
+      );
     } catch (error) {
-      return jsonResponse("Internal Server Error", { status: 500 });
+      return res.json(jsonResponse("Internal Server Error", { status: 500 }));
     }
   }
 
@@ -105,15 +117,18 @@ class BlogService {
         blog.category = category;
 
         await blog.save();
-        return jsonResponse(JSON.stringify(blog), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(blog), { status: 201 }));
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -164,12 +179,16 @@ class BlogService {
         pagesinformer,
       };
 
-      return jsonResponse(JSON.stringify(responseData), {
-        status: 201,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(responseData), {
+          status: 201,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse(ERROR_MESSAGES.CREATION_ERROR, { status: 500 });
+      return res.json(
+        jsonResponse(ERROR_MESSAGES.CREATION_ERROR, { status: 500 })
+      );
     }
   }
 
@@ -188,12 +207,16 @@ class BlogService {
         .limit(limit)
         .sort({ createdAt: -1 });
 
-      return jsonResponse(JSON.stringify({ blog, pages, total }), {
-        status: 201,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify({ blog, pages, total }), {
+          status: 201,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse("Erreur de creation de service", { status: 500 });
+      return res.json(
+        jsonResponse("Erreur de creation de service", { status: 500 })
+      );
     }
   }
 
@@ -244,12 +267,16 @@ class BlogService {
         pagesinformer,
       };
 
-      return jsonResponse(JSON.stringify(responseData), {
-        status: 201,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify(responseData), {
+          status: 201,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse(ERROR_MESSAGES.CREATION_ERROR, { status: 500 });
+      return res.json(
+        jsonResponse(ERROR_MESSAGES.CREATION_ERROR, { status: 500 })
+      );
     }
   }
 
@@ -267,12 +294,16 @@ class BlogService {
         .limit(limit)
         .sort({ createdAt: -1 });
 
-      return jsonResponse(JSON.stringify({ blog, pages, total }), {
-        status: 201,
-      });
+      return res.json(
+        jsonResponse(JSON.stringify({ blog, pages, total }), {
+          status: 201,
+        })
+      );
     } catch (error) {
       console.log(error);
-      return jsonResponse("Erreur de creation de service", { status: 500 });
+      return res.json(
+        jsonResponse("Erreur de creation de service", { status: 500 })
+      );
     }
   }
 }

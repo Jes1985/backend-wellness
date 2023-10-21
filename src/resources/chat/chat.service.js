@@ -107,15 +107,16 @@ class ChatService {
           },
         ]);
 
-        return jsonResponse(JSON.stringify(users), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(users), { status: 201 }));
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de serveur", { status: 500 });
+        return res.json(jsonResponse("Erreur de serveur", { status: 500 }));
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -136,17 +137,22 @@ class ChatService {
           isRead: false,
           recipient: session.id,
         });
-        return jsonResponse(JSON.stringify({ isNotRead, Chats, total }), {
-          status: 201,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify({ isNotRead, Chats, total }), {
+            status: 201,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -169,15 +175,20 @@ class ChatService {
           "sender",
           "username"
         );
-        return jsonResponse(JSON.stringify(chatUser), { status: 201 });
+        return res.json(
+          jsonResponse(JSON.stringify(chatUser), { status: 201 })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -190,17 +201,22 @@ class ChatService {
         const filter = { isRead: false, recipient: session.id };
         const update = { $set: { isRead: true } };
         const result = await Chat.updateMany(filter, update);
-        return jsonResponse(JSON.stringify(result), {
-          status: 201,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify(result), {
+            status: 201,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -221,17 +237,22 @@ class ChatService {
           .populate("sender", "username")
           .sort({ createdAt: 1 });
 
-        return jsonResponse(JSON.stringify(Chats), {
-          status: 201,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify(Chats), {
+            status: 201,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -250,15 +271,16 @@ class ChatService {
           },
           { new: true }
         );
-        return jsonResponse(JSON.stringify(chat), { status: 201 });
+        return res.json(jsonResponse(JSON.stringify(chat), { status: 201 }));
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de mise a jour", { status: 500 });
+        return res.json(jsonResponse("Erreur de mise a jour", { status: 500 }));
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
@@ -278,17 +300,22 @@ class ChatService {
           $or: [{ recipient: session.id }, { sender: session.id }],
         });
 
-        return jsonResponse(JSON.stringify({ Chats, total }), {
-          status: 201,
-        });
+        return res.json(
+          jsonResponse(JSON.stringify({ Chats, total }), {
+            status: 201,
+          })
+        );
       } catch (error) {
         console.log(error);
-        return jsonResponse("Erreur de creation de service", { status: 500 });
+        return res.json(
+          jsonResponse("Erreur de creation de service", { status: 500 })
+        );
       }
     } else {
-      return jsonResponse(
-        "Vous devez vous connecter pour effectuer cette action",
-        { status: 401 }
+      return res.json(
+        jsonResponse("Vous devez vous connecter pour effectuer cette action", {
+          status: 401,
+        })
       );
     }
   }
