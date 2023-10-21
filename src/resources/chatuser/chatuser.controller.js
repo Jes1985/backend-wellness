@@ -1,29 +1,31 @@
 const { Router } = require("express");
-const visitorService = require("./visitor.service");
+const chatService = require("../chat/chat.service");
 const {
-  getVisitor,
-  deleteVisitor,
-  updateVisitor,
-  createVisitor,
-} = require("./visitor.validation");
+  getChat,
+  deleteChat,
+  updateChat,
+  createChat,
+} = require("../chat/chat.validation");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
 const verifyUser = require("../../middleware/verifyUser");
 
-class VisitorController {
-  path = "/visitors";
+class ChatUserController {
+  path = "/chatuser";
   router = Router();
-  visitorService = new visitorService();
+  chatService = new chatService();
   constructor() {
     this.initializeRoutes();
   }
 
   initializeRoutes() {
-
-    this.router.get(`${this.path}/stat/`, verifyUser, this.visitorService.getAll);
-
+    this.router.get(
+      `${this.path}/`,
+      verifyUser,
+      this.chatService.getAllChatUser
+    );
   }
 }
 
-module.exports = { VisitorController };
+module.exports = { ChatUserController };

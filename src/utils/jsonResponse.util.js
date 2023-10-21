@@ -1,7 +1,7 @@
-const jsonResponse = (message, success, data) => ({
+const jsonResponse = (data, success, message) => ({
+  data,
   success,
   message,
-  data,
 });
 
 module.exports = { jsonResponse };

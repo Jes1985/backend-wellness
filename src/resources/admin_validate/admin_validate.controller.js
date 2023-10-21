@@ -1,17 +1,15 @@
 const { Router } = require("express");
 const serviceService = require("../service/service.service");
 const {
-  getService,
   deleteService,
   updateService,
-  createService,
-} = require("./service.validation");
+} = require("../service/service.validation");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
 const verifyUser = require("../../middleware/verifyUser");
 
-class ServiceController {
+class AdminValidateController {
   path = "/admin_validate";
   router = Router();
   serviceService = new serviceService();
@@ -35,4 +33,4 @@ class ServiceController {
   }
 }
 
-module.exports = { ServiceController };
+module.exports = { AdminValidateController };

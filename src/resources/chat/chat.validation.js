@@ -16,7 +16,7 @@ const updateChat = z.object({
   }),
   params: z.object({
     id: z.string(),
-  })
+  }),
 });
 
 const getChat = z.object({
@@ -25,5 +25,4 @@ const getChat = z.object({
   }),
 });
 
-
-module.exports = { createChat, updateChat, getChat, deleteChat };
+module.exports = { createChat, updateChat, getChat };

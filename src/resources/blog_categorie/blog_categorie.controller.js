@@ -5,12 +5,12 @@ const {
   deleteBlog,
   updateBlog,
   createBlog,
-} = require("./blog.validation");
+} = require("../blog/blog.validation");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
 
-class BlogController {
+class BlogCategoryController {
   path = "/blog_categorie";
   router = Router();
   blogService = new blogService();
@@ -19,11 +19,8 @@ class BlogController {
   }
 
   initializeRoutes() {
-    this.router.get(
-      `${this.path}/`,
-      this.blogService.getBlogCategory
-    );
+    this.router.get(`${this.path}/`, this.blogService.getBlogCategory);
   }
 }
 
-module.exports = { BlogController };
+module.exports = { BlogCategoryController };

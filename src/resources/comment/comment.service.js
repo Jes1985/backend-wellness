@@ -1,5 +1,5 @@
 const Chat = require("../chat/chat.model");
-const Order = require("../orders/order.model");
+const Order = require("../order/order.model");
 const Service = require("../service/service.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
@@ -9,8 +9,6 @@ const ERROR_MESSAGES = {
 };
 
 class CommentService {
-  Comment = Comment;
-
   async updateById(req, res, next) {
     const session = req.user;
 

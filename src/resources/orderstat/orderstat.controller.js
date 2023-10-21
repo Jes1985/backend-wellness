@@ -11,7 +11,7 @@ const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
 const verifyUser = require("../../middleware/verifyUser");
 
-class OrderController {
+class OrderStatController {
   path = "/orderstats";
   router = Router();
   orderService = new orderService();
@@ -20,10 +20,12 @@ class OrderController {
   }
 
   initializeRoutes() {
-
-    this.router.get(`${this.path}/`, verifyUser, this.orderService.getOrderstats);
-
+    this.router.get(
+      `${this.path}/`,
+      verifyUser,
+      this.orderService.getOrderstats
+    );
   }
 }
 
-module.exports = { OrderController };
+module.exports = { OrderStatController };

@@ -4,6 +4,7 @@ const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
 const { hashPassword } = require("../../utils/auth.util");
 const jwt = require("jsonwebtoken");
+const { jsonResponse } = require("../../utils/jsonResponse.util");
 
 const ERROR_MESSAGES = {
   CREATION_ERROR: "Erreur de donnée",
@@ -111,20 +112,19 @@ class UserService {
     }
   }
 
-  async updateSignup(req, res, next) {
+  async signUp(req, res, next) {
     const { username, email, password } = await req.body;
 
     try {
+      console.log("start request");
       const userExist = await User.findOne({ email });
-      if (userExist) {
-        return new Response(`Adresse email dejà utilisé`, {
-          status: 400,
-        });
-      }
 
-      // const customer = await stripe.customers.create({
-      //   email,
-      // });
+      console.log("user Exist");
+
+      if (userExist) {
+        console.log(new Response("Erreur de serveur", { status: 500 }));
+        return res.json(jsonResponse(undefined, false, "user already exist"));
+      }
 
       const passhash = await hashPassword(password);
       const user = new User({
@@ -135,9 +135,9 @@ class UserService {
       });
 
       const saveUser = await user.save();
-      return new Response(JSON.stringify(saveUser), {
-        status: 200,
-      });
+      console.log(passhash, saveUser);
+      console.log(new Response("Erreur de serveur", { status: 500 }));
+      return res.json(jsonResponse(saveUser, true));
     } catch (error) {
       console.log(error);
       return new Response("Erreur de serveur", { status: 500 });

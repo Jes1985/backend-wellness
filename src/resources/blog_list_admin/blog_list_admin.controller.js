@@ -5,12 +5,12 @@ const {
   deleteBlog,
   updateBlog,
   createBlog,
-} = require("./blog.validation");
+} = require("../blog/blog.validation");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
 
-class BlogController {
+class BlogListAdminController {
   path = "/blog_list_admin";
   router = Router();
   blogService = new blogService();
@@ -19,11 +19,8 @@ class BlogController {
   }
 
   initializeRoutes() {
-    this.router.get(
-      `${this.path}/`,
-      this.blogService.getBlogListAdmin
-    );
+    this.router.get(`${this.path}/`, this.blogService.getBlogListAdmin);
   }
 }
 
-module.exports = { BlogController };
+module.exports = { BlogListAdminController };

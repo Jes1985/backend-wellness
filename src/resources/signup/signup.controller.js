@@ -6,12 +6,14 @@ const {
   updateUser,
   createUser,
 } = require("../user/user.validation");
+const jwt = require("jsonwebtoken");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
+const verifyUser = require("../../middleware/verifyUser");
 
-class UserController {
-  path = "/reset_password";
+class SignupController {
+  path = "/signup";
   router = Router();
   userService = new userService();
   constructor() {
@@ -19,13 +21,14 @@ class UserController {
   }
 
   initializeRoutes() {
+    this.router.get(`${this.path}/`, verifyUser, this.userService.getAllSignUp);
 
-    this.router.patch(
+    this.router.post(
       `${this.path}/`,
-      zodValidator(updateUser),
-      this.userService.updatePassword
+      zodValidator(createUser),
+      this.userService.signUp
     );
   }
 }
 
-module.exports = { UserController };
+module.exports = { SignupController };

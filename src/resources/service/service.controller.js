@@ -20,17 +20,38 @@ class ServiceController {
   }
 
   initializeRoutes() {
-    this.router.get(`${this.path}/admin_all_service/`, verifyUser, this.serviceService.getAll);
+    this.router.get(
+      `${this.path}/admin_all_service/`,
+      verifyUser,
+      this.serviceService.getAll
+    );
 
-    this.router.get(`${this.path}/categories/`, this.serviceService.getAllCategory);
+    this.router.get(
+      `${this.path}/categories/`,
+      this.serviceService.getAllCategory
+    );
 
-    this.router.get(`${this.path}/favorites/`, verifyUser, this.serviceService.getAllFavorites);
+    this.router.get(
+      `${this.path}/favorites/`,
+      verifyUser,
+      this.serviceService.getAllFavorites
+    );
 
-    this.router.get(`${this.path}/fecth_all/`, this.serviceService.getAllService);
+    this.router.get(
+      `${this.path}/fecth_all/`,
+      this.serviceService.getAllService
+    );
 
-    this.router.get(`${this.path}/fetch_data/`, this.serviceService.getAllServiceWithUserData);
+    this.router.get(
+      `${this.path}/fetch_data/`,
+      this.serviceService.getAllServiceWithUserData
+    );
 
-    this.router.get(`${this.path}/myservice/`, verifyUser, this.serviceService.getAllServiceOfUser);
+    this.router.get(
+      `${this.path}/myservice/`,
+      verifyUser,
+      this.serviceService.getAllServiceOfUser
+    );
 
     this.router.get(`${this.path}/search/`, this.serviceService.searchService);
 
@@ -87,19 +108,14 @@ class ServiceController {
       `${this.path}/getbyuser/:id`,
       zodValidator(getService),
       verifyUser,
-      this.serviceService.getAllServiceByUser,
+      this.serviceService.getAllServiceByUser
     );
 
     this.router.get(
       `${this.path}/seller_services/:id`,
       zodValidator(getService),
-      this.serviceService.getSellerServices,
+      this.serviceService.getSellerServices
     );
-
-
-
-
-
     this.router.get(
       `${this.path}/:id`,
       zodValidator(getService),

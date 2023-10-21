@@ -3,7 +3,7 @@ const authService = require("./auth.service");
 const { login } = require("./auth.validation");
 const zodValidator = require("../../middleware/zod.middleware");
 
-class authController {
+class AuthController {
   path = "/auth";
   router = Router();
   authService = new authService();
@@ -20,4 +20,4 @@ class authController {
   }
 }
 
-module.exports = { authController };
+module.exports = { AuthController };
