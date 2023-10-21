@@ -1,6 +1,6 @@
 const z = require("zod").z;
 
-const createOrder = z.object({
+const createStripe = z.object({
   body: z.object({
     user: z.string(),
     serviceId: z.string(),
@@ -15,7 +15,7 @@ const createOrder = z.object({
   }),
 });
 // Pour tous les updates met exactement les champs du create suivi par .optional(). Uniquement pour les update
-const updateOrder = z.object({
+const updateStripe = z.object({
   body: z.object({
     user: z.string().optional(),
     serviceId: z.string().optional(),
@@ -33,16 +33,16 @@ const updateOrder = z.object({
   })
 });
 
-const getOrder = z.object({
+const getStripe = z.object({
   params: z.object({
     id: z.string(),
   }),
 });
 
-const deleteOrder = z.object({
+const deleteStripe = z.object({
   params: z.object({
     id: z.string(),
   }),
 });
 
-module.exports = { createOrder, updateOrder, getOrder, deleteOrder };
+module.exports = { createStripe, updateStripe, getStripe, deleteStripe };

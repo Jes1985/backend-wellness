@@ -180,15 +180,15 @@ class BlogService {
       const limit = 6;
       const page = searchParams.get('page') || 1;
       const skip = (page - 1) * limit;
-  
+
       const total = await Blog.countDocuments({});
-  
+
       const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
       const blog = await Blog.find({})
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 });
-  
+
       return new Response(JSON.stringify({ blog, pages, total }), {
         status: 201,
       });
@@ -200,42 +200,42 @@ class BlogService {
 
   async getByCategory(req, res, next) {
     try {
-      const { searchParams } = new URL(request.url);
+      const { searchParams } = new URL(req.url);
       const limit = 4;
       const pagem = parseInt(searchParams.get('pagem')) || 1;
       const pagen = parseInt(searchParams.get('pagen')) || 1;
       const pagei = parseInt(searchParams.get('pagei')) || 1;
-  
+
       const skipm = (pagem - 1) * limit;
       const skipn = (pagen - 1) * limit;
       const skipi = (pagei - 1) * limit;
-  
+
       const countPromises = [
         Blog.countDocuments({ category: 'Mieux connaitre la plateforme' }),
         Blog.countDocuments({ category: 'Nos Nouvelles parutions' }),
         Blog.countDocuments({ category: "S'informer et se former" }),
       ];
-  
+
       const [Mieuxtotal, nosNouvellesTotal, informerTotal] = await Promise.all(
         countPromises
       );
-  
+
       const getPageCount = (total) =>
         Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
-  
+
       const pagesMieux = getPageCount(Mieuxtotal);
       const pagesnosNouvelles = getPageCount(nosNouvellesTotal);
       const pagesinformer = getPageCount(informerTotal);
-  
+
       const getBlogs = async (category, skip) =>
         Blog.find({ category }).skip(skip).limit(limit).sort({ createdAt: -1 });
-  
+
       const [mieuxConnaitre, nosNouvelles, informer] = await Promise.all([
         getBlogs('Mieux connaitre la plateforme', skipm),
         getBlogs('Nos Nouvelles parutions', skipn),
         getBlogs("S'informer et se former", skipi),
       ]);
-  
+
       const responseData = {
         mieuxConnaitre,
         nosNouvelles,
@@ -244,7 +244,7 @@ class BlogService {
         pagesnosNouvelles,
         pagesinformer,
       };
-  
+
       return new Response(JSON.stringify(responseData), {
         status: 201,
       });
@@ -277,8 +277,8 @@ class BlogService {
       return new Response('Erreur de creation de service', { status: 500 });
     }
   }
-  
-  
+
+
 }
 
 

@@ -14,16 +14,16 @@ const ERROR_MESSAGES = {
 class ServiceService {
   Service = Service;
 
-  async getById(req, res, next){
+  async getById(req, res, next) {
     const session = "user"
 
     try {
       const service = await Service.findById(req.params.id).populate('user');
-  
+
       if (!service) return new Response('Aucun service trouvé', { status: 404 });
-  
+
       const user = await User.findById(service.user._id).select('-password');
-  
+
       // Associer le profil de l'utilisateur à chaque commentaire
       const populatedComments = await Promise.all(
         service.comment.map(async (comment) => {
@@ -37,18 +37,18 @@ class ServiceService {
           return { ...comment._doc, user: commentUser };
         })
       );
-  
+
       // Mettre à jour les commentaires avec les profils des utilisateurs
       service.comment = populatedComments;
-  
+
       // Récupérer le profil du vendeur
       const sellerProfile = await Profil.findOne({ user: service.user._id });
-  
+
       const services = await Service.find({
         user: service.user._id,
         _id: { $ne: service._id },
       }).populate('user', 'username email');
-  
+
       // Associer le profil du vendeur à chaque service
       const populatedServices = await Promise.all(
         services.map(async (service) => {
@@ -62,7 +62,7 @@ class ServiceService {
           return { ...service._doc, profil: sellerProfile };
         })
       );
-  
+
       return new Response(
         JSON.stringify({ service, services: populatedServices, user }),
         {
@@ -73,9 +73,9 @@ class ServiceService {
       return new Response('Internal Server Error', { status: 500 });
     }
   }
-    
-  async patchById(req, res, next){
-    const { category, souscategory, title } = await request.json();
+
+  async patchById(req, res, next) {
+    const { category, souscategory, title } = await req.json();
     const session = await getUseSession();
 
     try {
@@ -109,7 +109,7 @@ class ServiceService {
     }
   }
 
-  async updateById(req, res, next){
+  async updateById(req, res, next) {
     const session = "user"
 
     try {
@@ -117,24 +117,24 @@ class ServiceService {
       if (!session) {
         throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
       }
-  
+
       const existingService = await Service.findById(req.params.id);
       // Vérifier si le service existe
       if (!existingService) {
         throw new Error(ERROR_MESSAGES.SERVICE_NOT_FOUND, { status: 404 });
       }
-  
+
       // Vérifier si l'utilisateur est autorisé à modifier le service
       if (existingService.user.toString() !== session.user.id) {
         throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
       }
-  
+
       const isPublish = !existingService.isPublish;
-  
+
       const service = await Service.findByIdAndUpdate(req.params.id, {
         $set: { isPublish },
       });
-  
+
       return new Response(JSON.stringify(service), {
         status: 200,
       });
@@ -144,7 +144,7 @@ class ServiceService {
     }
   }
 
-  async deleteById(req, res, next){
+  async deleteById(req, res, next) {
     const session = "user"
 
     try {
@@ -152,20 +152,20 @@ class ServiceService {
       if (!session) {
         throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
       }
-  
+
       const existingService = await Service.findById(req.params.id);
       // Vérifier si le service existe
       if (!existingService) {
         throw new Error(ERROR_MESSAGES.SERVICE_NOT_FOUND, { status: 404 });
       }
-  
+
       // Vérifier si l'utilisateur est autorisé à supprimer le service
       if (existingService.user.toString() !== session.user.id) {
         throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
       }
-  
+
       await Service.findByIdAndDelete(req.params.id);
-  
+
       return new Response(
         JSON.stringify({ message: 'Service supprimé avec succès' }),
         {
@@ -178,17 +178,17 @@ class ServiceService {
     }
   }
 
-  async getAll(req, res, next){
+  async getAll(req, res, next) {
     const session = "user"
 
     if (session && session.user && session.user.isAdmin) {
       try {
         const { searchParams } = new URL(req.url);
-  
+
         const limit = 6;
         const page = searchParams.get('page') || 1;
         const skip = (page - 1) * limit;
-  
+
         const services = await Service.find({ isPublish: true })
           .skip(skip)
           .limit(limit)
@@ -196,9 +196,9 @@ class ServiceService {
             createdAt: -1,
           });
         const total = await Service.countDocuments({ isPublish: true });
-  
+
         const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
-  
+
         return new Response(JSON.stringify({ services, pages, total }), {
           status: 200,
         });
@@ -213,19 +213,19 @@ class ServiceService {
       );
     }
   }
-  
-  async getAllCategory(req, res, next){
+
+  async getAllCategory(req, res, next) {
     const { searchParams } = new URL(req.url);
 
     const limit = 8;
     const page = searchParams.get('page') || 1;
     const skip = (page - 1) * limit;
-  
+
     const category = searchParams.get('category');
     const susCategory = searchParams.get('susCategory');
     const deliveryDay = searchParams.get('deliveryDay');
     const getstart = searchParams.get('getstart');
-  
+
     const minPrice =
       searchParams.get('minPrice') === 'undefined'
         ? 0
@@ -234,14 +234,14 @@ class ServiceService {
       searchParams.get('maxPrice') === 'undefined'
         ? 2000
         : searchParams.get('maxPrice');
-  
+
     const subCategories = susCategory
       ? { souscategory: { $in: susCategory } }
       : {};
     const start = getstart ? { rating: getstart } : {};
-  
+
     const deliveryDays = deliveryDay ? { 'priceDetail.title': deliveryDay } : {};
-  
+
     const total = await Service.countDocuments({
       isPublish: true,
       isValidate: true,
@@ -251,7 +251,7 @@ class ServiceService {
       ...start,
       ...deliveryDays,
     });
-  
+
     try {
       const services = await Service.find({
         isPublish: true,
@@ -265,9 +265,9 @@ class ServiceService {
         .populate('user', 'username')
         .skip(skip)
         .limit(limit);
-  
+
       if (!services) return new Response('Aucun service trouvé', { status: 404 });
-  
+
       const populatedServices = await Promise.all(
         services.map(async (service) => {
           let sellerProfile = null;
@@ -279,9 +279,9 @@ class ServiceService {
           return { ...service._doc, profil: sellerProfile };
         })
       );
-  
+
       const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
-  
+
       return new Response(
         JSON.stringify({ service: populatedServices, pages, total }),
         {
@@ -293,68 +293,68 @@ class ServiceService {
     }
   }
 
-  async create(req, res, next){
+  async create(req, res, next) {
     const session = "user"
 
     if (session) {
-    const { title, category, souscategory, cities } = await req.json();
+      const { title, category, souscategory, cities } = await req.json();
 
-    try {
-      const service = new Service({
-        user: session.user.id,
-        title,
-        category,
-        souscategory,
-        cities,
-      });
+      try {
+        const service = new Service({
+          user: session.user.id,
+          title,
+          category,
+          souscategory,
+          cities,
+        });
 
-      await service.save();
-      return new Response(JSON.stringify(service), { status: 201 });
-    } catch (error) {
-      return new Response('Erreur de creation de service', { status: 500 });
+        await service.save();
+        return new Response(JSON.stringify(service), { status: 201 });
+      } catch (error) {
+        return new Response('Erreur de creation de service', { status: 500 });
+      }
+    } else {
+      return new Response(
+        'Vous devez vous connecter pour effectuer cette action',
+        { status: 401 }
+      );
     }
-  } else {
-    return new Response(
-      'Vous devez vous connecter pour effectuer cette action',
-      { status: 401 }
-    );
-  }
   }
 
-  async create_step2(req, res, next){
+  async create_step2(req, res, next) {
     const session = "user"
 
     if (session) {
-    const { title, category, souscategory, cities } = await req.json();
+      const { title, category, souscategory, cities } = await req.json();
 
-    try {
-      const service = new Service({
-        user: session.user.id,
-        title,
-        category,
-        souscategory,
-        cities,
-      });
+      try {
+        const service = new Service({
+          user: session.user.id,
+          title,
+          category,
+          souscategory,
+          cities,
+        });
 
-      await service.save();
-      return new Response(JSON.stringify(service), { status: 201 });
-    } catch (error) {
-      return new Response('Erreur de creation de service', { status: 500 });
+        await service.save();
+        return new Response(JSON.stringify(service), { status: 201 });
+      } catch (error) {
+        return new Response('Erreur de creation de service', { status: 500 });
+      }
+    } else {
+      return new Response(
+        'Vous devez vous connecter pour effectuer cette action',
+        { status: 401 }
+      );
     }
-  } else {
-    return new Response(
-      'Vous devez vous connecter pour effectuer cette action',
-      { status: 401 }
-    );
-  }
   }
 
-  async create_step3(req, res, next){
+  async create_step3(req, res, next) {
     const session = "user"
 
     if (session) {
-      const { title, valeur } = await request.json();
-  
+      const { title, valeur } = await req.json();
+
       try {
         const service = await Service.findByIdAndUpdate(
           req.params.id,
@@ -379,13 +379,13 @@ class ServiceService {
       );
     }
   }
-  
-  async create_step4(req, res, next){
+
+  async create_step4(req, res, next) {
     const session = "user"
 
     if (session) {
-      const { options } = await request.json();
-  
+      const { options } = await req.json();
+
       try {
         const service = await Service.findByIdAndUpdate(
           req.params.id,
@@ -408,12 +408,12 @@ class ServiceService {
     }
   }
 
-  async create_step5(req, res, next){
+  async create_step5(req, res, next) {
     const session = "user"
 
     if (session) {
-      const { serviceNote } = await request.json();
-  
+      const { serviceNote } = await req.json();
+
       try {
         const service = await Service.findByIdAndUpdate(
           req.params.id,
@@ -436,12 +436,12 @@ class ServiceService {
     }
   }
 
-  async create_step6(req, res, next){
+  async create_step6(req, res, next) {
     const session = "user"
 
     if (session) {
-      const { image } = await request.json();
-  
+      const { image } = await req.json();
+
       try {
         const service = await Service.findByIdAndUpdate(
           req.params.id,
@@ -465,26 +465,26 @@ class ServiceService {
     }
   }
 
-  async createFavorite(req, res, next){
+  async createFavorite(req, res, next) {
     const session = "user"
 
     if (session) {
       try {
         // Vérifier si le service est déjà dans les favoris de l'utilisateur
-        const { serviceId } = await request.json();
+        const { serviceId } = await req.json();
         const user = await User.findById(session.user.id);
         const serviceIndex = user.favoriteServices.indexOf(serviceId);
-  
+
         if (serviceIndex === -1) {
           // Le service n'est pas dans les favoris, donc l'ajouter
           const userUpdated = await User.findByIdAndUpdate(session.user.id, {
             $addToSet: { favoriteServices: serviceId },
           });
-  
+
           const service = await Service.findByIdAndUpdate(serviceId, {
             $addToSet: { favorites: session.user.id },
           });
-  
+
           console.log(service, userUpdated);
           return new Response(JSON.stringify('Service ajouté aux favoris'), {
             status: 201,
@@ -494,7 +494,7 @@ class ServiceService {
           const removeuserF = await User.findByIdAndUpdate(session.user.id, {
             $pull: { favoriteServices: serviceId },
           });
-  
+
           const removeService = await Service.findByIdAndUpdate(serviceId, {
             $pull: { favorites: session.user.id },
           });
@@ -513,69 +513,69 @@ class ServiceService {
       );
     }
   }
-  
-  async getAllFavorites(req, res, next){
+
+  async getAllFavorites(req, res, next) {
     const session = "user"
 
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
 
-  const limit = 8;
-  const page = searchParams.get('page') || 1;
-  const skip = (page - 1) * limit;
+    const limit = 8;
+    const page = searchParams.get('page') || 1;
+    const skip = (page - 1) * limit;
 
-  const id = searchParams.get('id');
+    const id = searchParams.get('id');
 
-  if (session) {
-    try {
-      const services = await Service.find({
-        favorites: { $in: [id] },
-      })
-        .populate('user', 'username')
-        .skip(skip)
-        .limit(limit);
-
-      const populatedServices = await Promise.all(
-        services.map(async (service) => {
-          let sellerProfile = null;
-          if (service.user) {
-            sellerProfile = await Profil.findOne({
-              user: service.user._id,
-            }).populate('user', 'username');
-          }
-          return { ...service._doc, profil: sellerProfile };
+    if (session) {
+      try {
+        const services = await Service.find({
+          favorites: { $in: [id] },
         })
-      );
+          .populate('user', 'username')
+          .skip(skip)
+          .limit(limit);
 
-      const total = await Service.countDocuments({
-        favorites: { $in: [id] },
-      });
+        const populatedServices = await Promise.all(
+          services.map(async (service) => {
+            let sellerProfile = null;
+            if (service.user) {
+              sellerProfile = await Profil.findOne({
+                user: service.user._id,
+              }).populate('user', 'username');
+            }
+            return { ...service._doc, profil: sellerProfile };
+          })
+        );
 
-      const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
+        const total = await Service.countDocuments({
+          favorites: { $in: [id] },
+        });
+
+        const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
+        return new Response(
+          JSON.stringify({ service: populatedServices, total, pages }),
+          {
+            status: 201,
+          }
+        );
+      } catch (error) {
+        console.log(error);
+        return { success: false, message: 'Une erreur est survenue' };
+      }
+    } else {
       return new Response(
-        JSON.stringify({ service: populatedServices, total, pages }),
-        {
-          status: 201,
-        }
+        'Vous devez vous connecter pour effectuer cette action',
+        { status: 401 }
       );
-    } catch (error) {
-      console.log(error);
-      return { success: false, message: 'Une erreur est survenue' };
     }
-  } else {
-    return new Response(
-      'Vous devez vous connecter pour effectuer cette action',
-      { status: 401 }
-    );
   }
-  }
-  
-  async getAllService(req, res, next){
+
+  async getAllService(req, res, next) {
 
     try {
       const services = await Service.find({ isPublish: true, isValidate: true })
         .sort({ createdAt: -1 })
         .populate('user', 'username');
-  
+
       const populatedServices = await Promise.all(
         services.map(async (service) => {
           let sellerProfile = null;
@@ -593,8 +593,8 @@ class ServiceService {
       return new Response('Failed to fetch all prompts', { status: 500 });
     }
   }
-  
-  async getAllServiceWithUserData(req, res, next){
+
+  async getAllServiceWithUserData(req, res, next) {
 
     try {
       const services = await Service.find({
@@ -603,7 +603,7 @@ class ServiceService {
       }).sort({
         createdAt: -1,
       });
-  
+
       const populatedServices = await Promise.all(
         services.map(async (service) => {
           let sellerProfile = null;
@@ -622,8 +622,8 @@ class ServiceService {
       return new Response('Failed to fetch all prompts', { status: 500 });
     }
   }
-  
-  async getAllServiceByUser(req, res, next){
+
+  async getAllServiceByUser(req, res, next) {
     const session = "user"
 
     if (session) {
@@ -647,10 +647,10 @@ class ServiceService {
     }
   }
 
-  async getAllServiceOfUser(req, res, next){
+  async getAllServiceOfUser(req, res, next) {
     const session = "user"
 
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
 
     const limit = 6;
     const page = searchParams.get('page') || 1;
@@ -676,8 +676,8 @@ class ServiceService {
     }
   }
 
-  async searchService(req, res, next){
-    const { searchParams } = new URL(request.url);
+  async searchService(req, res, next) {
+    const { searchParams } = new URL(req.url);
 
     const limit = 8;
     const page = searchParams.get('page') || 1;
@@ -687,11 +687,11 @@ class ServiceService {
 
     const search = keywords
       ? {
-          title: {
-            $regex: keywords,
-            $options: 'i',
-          },
-        }
+        title: {
+          $regex: keywords,
+          $options: 'i',
+        },
+      }
       : {};
 
     const total = await Service.countDocuments({
@@ -738,8 +738,8 @@ class ServiceService {
       return new Response('Internal Server Error', { status: 500 });
     }
   }
-  
-  async getSellerServices(req, res, next){
+
+  async getSellerServices(req, res, next) {
     try {
       const services = await Service.find({
         user: req.params.id,
@@ -756,11 +756,11 @@ class ServiceService {
           return { ...service._doc, profil: sellerProfile };
         })
       );
-  
+
       const profileSeller = await Profil.findOne({
         user: req.params.id,
       }).populate('user', 'username createdAt');
-  
+
       const responseData = {
         populatedServices,
         profileseller: profileSeller,
@@ -775,26 +775,26 @@ class ServiceService {
     }
   }
 
-  async updateAdminValidate(req, res, next){
+  async updateAdminValidate(req, res, next) {
     const session = "user"
 
     try {
       if (session && session.user && !session.user.isAdmin) {
         throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
       }
-  
+
       const existingService = await Service.findById(req.params.id);
-  
+
       if (!existingService) {
         throw new Error(ERROR_MESSAGES.SERVICE_NOT_FOUND, { status: 404 });
       }
-  
+
       const isValidate = !existingService.isValidate;
-  
+
       const service = await Service.findByIdAndUpdate(req.params.id, {
         $set: { isValidate },
       });
-  
+
       return new Response(JSON.stringify(service), {
         status: 200,
       });
@@ -804,7 +804,7 @@ class ServiceService {
     }
   }
 
-  async deleteAdminValidate(req, res, next){
+  async deleteAdminValidate(req, res, next) {
     const session = "user"
 
     try {
@@ -812,15 +812,15 @@ class ServiceService {
       if (session && session.user && !session.user.isAdmin) {
         throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
       }
-  
+
       const existingService = await Service.findById(req.params.id);
       // Vérifier si le service existe
       if (!existingService) {
         throw new Error(ERROR_MESSAGES.SERVICE_NOT_FOUND, { status: 404 });
       }
-  
+
       await Service.findByIdAndDelete(req.params.id);
-  
+
       return new Response(
         JSON.stringify({ message: 'Service supprimé avec succès' }),
         {
@@ -832,10 +832,10 @@ class ServiceService {
       return new Response(error, { status: 500 });
     }
   }
-  
-  
 
-}   
+
+
+}
 
 
 
