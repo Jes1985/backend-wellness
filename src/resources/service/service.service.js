@@ -2,6 +2,7 @@ const Service = require("./service.model");
 const User = require("../user/user.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
+const { jsonResponse } = require("../../utils/jsonResponse.util");
 
 const ERROR_MESSAGES = {
   CREATION_ERROR: "Erreur de donnée",
@@ -20,7 +21,7 @@ class ServiceService {
       const service = await Service.findById(req.params.id).populate("user");
 
       if (!service)
-        return new Response("Aucun service trouvé", { status: 404 });
+        return jsonResponse("Aucun service trouvé", { status: 404 });
 
       const user = await User.findById(service.user._id).select("-password");
 
@@ -62,14 +63,14 @@ class ServiceService {
         })
       );
 
-      return new Response(
+      return jsonResponse(
         JSON.stringify({ service, services: populatedServices, user }),
         {
           status: 200,
         }
       );
     } catch (error) {
-      return new Response("Internal Server Error", { status: 500 });
+      return jsonResponse("Internal Server Error", { status: 500 });
     }
   }
 
@@ -99,12 +100,12 @@ class ServiceService {
 
       await existingService.save();
 
-      return new Response(JSON.stringify(existingService), {
+      return jsonResponse(JSON.stringify(existingService), {
         status: 200,
       });
     } catch (error) {
       console.log(error);
-      return new Response(error, { status: 500 });
+      return jsonResponse(error, { status: 500 });
     }
   }
 
@@ -134,12 +135,12 @@ class ServiceService {
         $set: { isPublish },
       });
 
-      return new Response(JSON.stringify(service), {
+      return jsonResponse(JSON.stringify(service), {
         status: 200,
       });
     } catch (error) {
       console.log(error);
-      return new Response(error, { status: 500 });
+      return jsonResponse(error, { status: 500 });
     }
   }
 
@@ -165,7 +166,7 @@ class ServiceService {
 
       await Service.findByIdAndDelete(req.params.id);
 
-      return new Response(
+      return jsonResponse(
         JSON.stringify({ message: "Service supprimé avec succès" }),
         {
           status: 200,
@@ -173,7 +174,7 @@ class ServiceService {
       );
     } catch (error) {
       console.log(error);
-      return new Response(error, { status: 500 });
+      return jsonResponse(error, { status: 500 });
     }
   }
 
@@ -198,15 +199,15 @@ class ServiceService {
 
         const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
 
-        return new Response(JSON.stringify({ services, pages, total }), {
+        return jsonResponse(JSON.stringify({ services, pages, total }), {
           status: 200,
         });
       } catch (error) {
         console.log(error);
-        return new Response("Failed to fetch all prompts", { status: 500 });
+        return jsonResponse("Failed to fetch all prompts", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -268,7 +269,7 @@ class ServiceService {
         .limit(limit);
 
       if (!services)
-        return new Response("Aucun service trouvé", { status: 404 });
+        return jsonResponse("Aucun service trouvé", { status: 404 });
 
       const populatedServices = await Promise.all(
         services.map(async (service) => {
@@ -284,14 +285,14 @@ class ServiceService {
 
       const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
 
-      return new Response(
+      return jsonResponse(
         JSON.stringify({ service: populatedServices, pages, total }),
         {
           status: 200,
         }
       );
     } catch (error) {
-      return new Response("Internal Server Error", { status: 500 });
+      return jsonResponse("Internal Server Error", { status: 500 });
     }
   }
 
@@ -311,12 +312,12 @@ class ServiceService {
         });
 
         await service.save();
-        return new Response(JSON.stringify(service), { status: 201 });
+        return jsonResponse(JSON.stringify(service), { status: 201 });
       } catch (error) {
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -339,12 +340,12 @@ class ServiceService {
         });
 
         await service.save();
-        return new Response(JSON.stringify(service), { status: 201 });
+        return jsonResponse(JSON.stringify(service), { status: 201 });
       } catch (error) {
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -370,12 +371,12 @@ class ServiceService {
           },
           { new: true }
         );
-        return new Response(JSON.stringify(service), { status: 201 });
+        return jsonResponse(JSON.stringify(service), { status: 201 });
       } catch (error) {
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -398,12 +399,12 @@ class ServiceService {
           },
           { new: true }
         );
-        return new Response(JSON.stringify(service), { status: 201 });
+        return jsonResponse(JSON.stringify(service), { status: 201 });
       } catch (error) {
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -426,12 +427,12 @@ class ServiceService {
           },
           { new: true }
         );
-        return new Response(JSON.stringify(service), { status: 201 });
+        return jsonResponse(JSON.stringify(service), { status: 201 });
       } catch (error) {
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -455,12 +456,12 @@ class ServiceService {
           },
           { new: true }
         );
-        return new Response(JSON.stringify(service), { status: 201 });
+        return jsonResponse(JSON.stringify(service), { status: 201 });
       } catch (error) {
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -488,7 +489,7 @@ class ServiceService {
           });
 
           console.log(service, userUpdated);
-          return new Response(JSON.stringify("Service ajouté aux favoris"), {
+          return jsonResponse(JSON.stringify("Service ajouté aux favoris"), {
             status: 201,
           });
         } else {
@@ -500,7 +501,7 @@ class ServiceService {
           const removeService = await Service.findByIdAndUpdate(serviceId, {
             $pull: { favorites: session.id },
           });
-          return new Response(JSON.stringify("Service supprimé des favoris"), {
+          return jsonResponse(JSON.stringify("Service supprimé des favoris"), {
             status: 201,
           });
         }
@@ -509,7 +510,7 @@ class ServiceService {
         return { success: false, message: "Une erreur est survenue" };
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -553,7 +554,7 @@ class ServiceService {
         });
 
         const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
-        return new Response(
+        return jsonResponse(
           JSON.stringify({ service: populatedServices, total, pages }),
           {
             status: 201,
@@ -564,7 +565,7 @@ class ServiceService {
         return { success: false, message: "Une erreur est survenue" };
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -588,10 +589,10 @@ class ServiceService {
           return { ...service._doc, profil: sellerProfile };
         })
       );
-      return new Response(JSON.stringify(populatedServices), { status: 200 });
+      return jsonResponse(JSON.stringify(populatedServices), { status: 200 });
     } catch (error) {
       console.log(error);
-      return new Response("Failed to fetch all prompts", { status: 500 });
+      return jsonResponse("Failed to fetch all prompts", { status: 500 });
     }
   }
 
@@ -615,11 +616,11 @@ class ServiceService {
           return { ...service._doc, profil: sellerProfile };
         })
       );
-      return new Response(JSON.stringify(populatedServices), { status: 200 });
+      return jsonResponse(JSON.stringify(populatedServices), { status: 200 });
       // res.status(200).json(services);
     } catch (error) {
       console.log(error);
-      return new Response("Failed to fetch all prompts", { status: 500 });
+      return jsonResponse("Failed to fetch all prompts", { status: 500 });
     }
   }
 
@@ -633,14 +634,14 @@ class ServiceService {
           isValidate: true,
           user: req.params.id,
         }).populate("user");
-        return new Response(JSON.stringify(services), {
+        return jsonResponse(JSON.stringify(services), {
           status: 200,
         });
       } catch (error) {
-        return new Response("Internal Server Error", { status: 500 });
+        return jsonResponse("Internal Server Error", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -668,11 +669,11 @@ class ServiceService {
 
       const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
 
-      return new Response(JSON.stringify({ services, pages, total }), {
+      return jsonResponse(JSON.stringify({ services, pages, total }), {
         status: 200,
       });
     } catch (error) {
-      return new Response("Failed to fetch all prompts", { status: 500 });
+      return jsonResponse("Failed to fetch all prompts", { status: 500 });
     }
   }
 
@@ -728,14 +729,14 @@ class ServiceService {
 
       const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
 
-      return new Response(
+      return jsonResponse(
         JSON.stringify({ service: populatedServices, pages, total }),
         {
           status: 200,
         }
       );
     } catch (error) {
-      return new Response("Internal Server Error", { status: 500 });
+      return jsonResponse("Internal Server Error", { status: 500 });
     }
   }
 
@@ -766,12 +767,12 @@ class ServiceService {
         profileseller: profileSeller,
         user,
       };
-      return new Response(JSON.stringify(responseData), {
+      return jsonResponse(JSON.stringify(responseData), {
         status: 200,
       });
     } catch (error) {
       console.error(error);
-      return new Response("Erreur de serveur", { status: 500 });
+      return jsonResponse("Erreur de serveur", { status: 500 });
     }
   }
 
@@ -795,12 +796,12 @@ class ServiceService {
         $set: { isValidate },
       });
 
-      return new Response(JSON.stringify(service), {
+      return jsonResponse(JSON.stringify(service), {
         status: 200,
       });
     } catch (error) {
       console.log(error);
-      return new Response(error, { status: 500 });
+      return jsonResponse(error, { status: 500 });
     }
   }
 
@@ -821,7 +822,7 @@ class ServiceService {
 
       await Service.findByIdAndDelete(req.params.id);
 
-      return new Response(
+      return jsonResponse(
         JSON.stringify({ message: "Service supprimé avec succès" }),
         {
           status: 200,
@@ -829,7 +830,7 @@ class ServiceService {
       );
     } catch (error) {
       console.log(error);
-      return new Response(error, { status: 500 });
+      return jsonResponse(error, { status: 500 });
     }
   }
 }

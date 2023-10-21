@@ -3,6 +3,7 @@ const Order = require("../order/order.model");
 const Service = require("../service/service.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
+const { jsonResponse } = require("../../utils/jsonResponse.util");
 
 const ERROR_MESSAGES = {
   CREATION_ERROR: "Erreur de donnée",
@@ -106,12 +107,12 @@ class CommentService {
         }
       }
 
-      return new Response(JSON.stringify(service), {
+      return jsonResponse(JSON.stringify(service), {
         status: 200,
       });
     } catch (error) {
       console.log(error);
-      return new Response("Erreur de serveur", { status: 500 });
+      return jsonResponse("Erreur de serveur", { status: 500 });
     }
   }
 
@@ -152,12 +153,12 @@ class CommentService {
 
       // Sauvegarder les modifications du service
       await service.save();
-      return new Response(JSON.stringify(service), {
+      return jsonResponse(JSON.stringify(service), {
         status: 201,
       });
     } catch (error) {
       console.log(error);
-      return new Response("Erreur de suppression du commentaire", {
+      return jsonResponse("Erreur de suppression du commentaire", {
         status: 500,
       });
     }
@@ -181,12 +182,12 @@ class CommentService {
       );
 
       // Le commentaire de l'utilisateur existe
-      return new Response(JSON.stringify(userComment), {
+      return jsonResponse(JSON.stringify(userComment), {
         status: 200,
       });
     } catch (error) {
       console.log(error);
-      return new Response("Erreur de serveur", { status: 500 });
+      return jsonResponse("Erreur de serveur", { status: 500 });
     }
   }
 
@@ -227,15 +228,15 @@ class CommentService {
             },
           },
         ]);
-        return new Response(JSON.stringify(comments), {
+        return jsonResponse(JSON.stringify(comments), {
           status: 200,
         });
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de serveur", { status: 500 });
+        return jsonResponse("Erreur de serveur", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -266,15 +267,15 @@ class CommentService {
             ? serviceCommentCount[0].totalComments
             : 0;
 
-        return new Response(JSON.stringify(totalComments), {
+        return jsonResponse(JSON.stringify(totalComments), {
           status: 200,
         });
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de serveur", { status: 500 });
+        return jsonResponse("Erreur de serveur", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -313,7 +314,7 @@ class CommentService {
 
         console.log({ positiveReview, negativeReviews, totalRating });
 
-        return new Response(
+        return jsonResponse(
           JSON.stringify({
             positiveReview,
             negativeReviews,
@@ -325,10 +326,10 @@ class CommentService {
         );
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de serveur", { status: 500 });
+        return jsonResponse("Erreur de serveur", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );

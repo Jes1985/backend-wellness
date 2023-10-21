@@ -1,9 +1,6 @@
 const { Router } = require("express");
 const chatService = require("./chat.service");
-const {
-  getChat,
-  updateChat,
-} = require("./chat.validation");
+const { getChat, updateChat } = require("./chat.validation");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
@@ -18,7 +15,11 @@ class ChatController {
   }
 
   initializeRoutes() {
-    this.router.get(`${this.path}/listuser/`, verifyUser, this.chatService.listUser);
+    this.router.get(
+      `${this.path}/listuser/`,
+      verifyUser,
+      this.chatService.listUser
+    );
 
     this.router.get(`${this.path}/`, verifyUser, this.chatService.getAll);
 

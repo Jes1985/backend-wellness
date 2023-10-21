@@ -1,6 +1,7 @@
 const CancelOrder = require("./cancelOrder.model");
 const Chat = require("../chat/chat.model");
 const Order = require("../order/order.model");
+const { jsonResponse } = require("../../utils/jsonResponse.util");
 const { dbConnect } = require("../../config/dbConnect");
 
 const ERROR_MESSAGES = {
@@ -62,15 +63,15 @@ class CancelOrderService {
           );
         }
 
-        return new Response(JSON.stringify(orderCancel), {
+        return jsonResponse(JSON.stringify(orderCancel), {
           status: 201,
         });
       } catch (error) {
         console.log(error);
-        return new Response(`Une erreur s'est produite`, { status: 500 });
+        return jsonResponse(`Une erreur s'est produite`, { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -85,17 +86,17 @@ class CancelOrderService {
     if (session) {
       try {
         const cancelOrder = await CancelOrder.findOne({ orderId: id });
-        return new Response(JSON.stringify(cancelOrder), {
+        return jsonResponse(JSON.stringify(cancelOrder), {
           status: 201,
         });
       } catch (error) {
         console.log(error);
-        return new Response(`Erreur:Une erreur s'est produite`, {
+        return jsonResponse(`Erreur:Une erreur s'est produite`, {
           status: 500,
         });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -143,15 +144,15 @@ class CancelOrderService {
 
         const data = await chat.save();
 
-        return new Response(JSON.stringify({ data, orderCancel }), {
+        return jsonResponse(JSON.stringify({ data, orderCancel }), {
           status: 201,
         });
       } catch (error) {
         console.log(error);
-        return new Response(error, { status: 500 });
+        return jsonResponse(error, { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -203,15 +204,15 @@ class CancelOrderService {
           .limit(limit)
           .sort({ createdAt: -1 });
 
-        return new Response(JSON.stringify({ cancelOrder, pages, total }), {
+        return jsonResponse(JSON.stringify({ cancelOrder, pages, total }), {
           status: 201,
         });
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );

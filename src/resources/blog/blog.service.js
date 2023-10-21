@@ -1,6 +1,7 @@
 const Blog = require("./blog.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
+const { jsonResponse } = require("../../utils/jsonResponse.util");
 
 const ERROR_MESSAGES = {
   CREATION_ERROR: "Erreur de donnée",
@@ -25,13 +26,13 @@ class BlogService {
         });
 
         await blog.save();
-        return new Response(JSON.stringify(blog), { status: 201 });
+        return jsonResponse(blog, 201);
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse(undefined, 500, "Erreur de creation de service");
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -44,25 +45,25 @@ class BlogService {
         "username"
       );
 
-      if (!blog) return new Response("Aucun service trouvé", { status: 404 });
+      if (!blog) return jsonResponse("Aucun service trouvé", { status: 404 });
 
-      return new Response(JSON.stringify(blog), {
+      return jsonResponse(JSON.stringify(blog), {
         status: 200,
       });
     } catch (error) {
-      return new Response("Internal Server Error", { status: 500 });
+      return jsonResponse("Internal Server Error", { status: 500 });
     }
   }
 
   async getAll(req, res, next) {
     try {
       const blog = await Blog.find({});
-      return new Response(JSON.stringify(blog), {
+      return jsonResponse(JSON.stringify(blog), {
         status: 201,
       });
     } catch (error) {
       console.log(error);
-      return new Response("Erreur de creation de service", { status: 500 });
+      return jsonResponse("Erreur de creation de service", { status: 500 });
     }
   }
 
@@ -79,11 +80,11 @@ class BlogService {
         );
       }
       const blog = await Blog.findByIdAndDelete(req.params.id);
-      return new Response("Blog supprimer avec success", {
+      return jsonResponse("Blog supprimer avec success", {
         status: 200,
       });
     } catch (error) {
-      return new Response("Internal Server Error", { status: 500 });
+      return jsonResponse("Internal Server Error", { status: 500 });
     }
   }
 
@@ -104,13 +105,13 @@ class BlogService {
         blog.category = category;
 
         await blog.save();
-        return new Response(JSON.stringify(blog), { status: 201 });
+        return jsonResponse(JSON.stringify(blog), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -163,12 +164,12 @@ class BlogService {
         pagesinformer,
       };
 
-      return new Response(JSON.stringify(responseData), {
+      return jsonResponse(JSON.stringify(responseData), {
         status: 201,
       });
     } catch (error) {
       console.log(error);
-      return new Response(ERROR_MESSAGES.CREATION_ERROR, { status: 500 });
+      return jsonResponse(ERROR_MESSAGES.CREATION_ERROR, { status: 500 });
     }
   }
 
@@ -187,12 +188,12 @@ class BlogService {
         .limit(limit)
         .sort({ createdAt: -1 });
 
-      return new Response(JSON.stringify({ blog, pages, total }), {
+      return jsonResponse(JSON.stringify({ blog, pages, total }), {
         status: 201,
       });
     } catch (error) {
       console.log(error);
-      return new Response("Erreur de creation de service", { status: 500 });
+      return jsonResponse("Erreur de creation de service", { status: 500 });
     }
   }
 
@@ -243,12 +244,12 @@ class BlogService {
         pagesinformer,
       };
 
-      return new Response(JSON.stringify(responseData), {
+      return jsonResponse(JSON.stringify(responseData), {
         status: 201,
       });
     } catch (error) {
       console.log(error);
-      return new Response(ERROR_MESSAGES.CREATION_ERROR, { status: 500 });
+      return jsonResponse(ERROR_MESSAGES.CREATION_ERROR, { status: 500 });
     }
   }
 
@@ -266,12 +267,12 @@ class BlogService {
         .limit(limit)
         .sort({ createdAt: -1 });
 
-      return new Response(JSON.stringify({ blog, pages, total }), {
+      return jsonResponse(JSON.stringify({ blog, pages, total }), {
         status: 201,
       });
     } catch (error) {
       console.log(error);
-      return new Response("Erreur de creation de service", { status: 500 });
+      return jsonResponse("Erreur de creation de service", { status: 500 });
     }
   }
 }

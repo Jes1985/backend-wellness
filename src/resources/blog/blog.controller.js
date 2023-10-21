@@ -11,7 +11,6 @@ const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
 const verifyUser = require("../../middleware/verifyUser");
 
-
 class BlogController {
   path = "/blogs";
   router = Router();
@@ -32,8 +31,10 @@ class BlogController {
 
     this.router.get(`${this.path}/admin/list/`, this.blogService.getAdminList);
 
-    this.router.get(`${this.path}/by-categories/`, this.blogService.getByCategory);
-
+    this.router.get(
+      `${this.path}/by-categories/`,
+      this.blogService.getByCategory
+    );
 
     this.router.get(
       `${this.path}/:id`,

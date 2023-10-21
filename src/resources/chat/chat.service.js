@@ -1,6 +1,6 @@
 const Chat = require("./chat.model");
 const User = require("../user/user.model");
-
+const { jsonResponse } = require("../../utils/jsonResponse.util");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
 
@@ -107,13 +107,13 @@ class ChatService {
           },
         ]);
 
-        return new Response(JSON.stringify(users), { status: 201 });
+        return jsonResponse(JSON.stringify(users), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de serveur", { status: 500 });
+        return jsonResponse("Erreur de serveur", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -136,15 +136,15 @@ class ChatService {
           isRead: false,
           recipient: session.id,
         });
-        return new Response(JSON.stringify({ isNotRead, Chats, total }), {
+        return jsonResponse(JSON.stringify({ isNotRead, Chats, total }), {
           status: 201,
         });
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -169,13 +169,13 @@ class ChatService {
           "sender",
           "username"
         );
-        return new Response(JSON.stringify(chatUser), { status: 201 });
+        return jsonResponse(JSON.stringify(chatUser), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -190,15 +190,15 @@ class ChatService {
         const filter = { isRead: false, recipient: session.id };
         const update = { $set: { isRead: true } };
         const result = await Chat.updateMany(filter, update);
-        return new Response(JSON.stringify(result), {
+        return jsonResponse(JSON.stringify(result), {
           status: 201,
         });
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -221,15 +221,15 @@ class ChatService {
           .populate("sender", "username")
           .sort({ createdAt: 1 });
 
-        return new Response(JSON.stringify(Chats), {
+        return jsonResponse(JSON.stringify(Chats), {
           status: 201,
         });
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -250,13 +250,13 @@ class ChatService {
           },
           { new: true }
         );
-        return new Response(JSON.stringify(chat), { status: 201 });
+        return jsonResponse(JSON.stringify(chat), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de mise a jour", { status: 500 });
+        return jsonResponse("Erreur de mise a jour", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -278,15 +278,15 @@ class ChatService {
           $or: [{ recipient: session.id }, { sender: session.id }],
         });
 
-        return new Response(JSON.stringify({ Chats, total }), {
+        return jsonResponse(JSON.stringify({ Chats, total }), {
           status: 201,
         });
       } catch (error) {
         console.log(error);
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );

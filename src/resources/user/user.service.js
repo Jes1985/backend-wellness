@@ -28,12 +28,12 @@ class UserService {
         });
 
         await profile.save();
-        return new Response(JSON.stringify(profile), { status: 201 });
+        return jsonResponse(JSON.stringify(profile), { status: 201 });
       } catch (error) {
-        return new Response("Erreur de creation de service", { status: 500 });
+        return jsonResponse("Erreur de creation de service", { status: 500 });
       }
     } else {
-      return new Response(
+      return jsonResponse(
         "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
@@ -51,10 +51,10 @@ class UserService {
 
     try {
       const profil = await Profil.findOne({ user: session.id });
-      return new Response(JSON.stringify(profil), { status: 200 });
+      return jsonResponse(JSON.stringify(profil), { status: 200 });
     } catch (error) {
       console.log(error);
-      return new Response("Erreur de profil", { status: 500 });
+      return jsonResponse("Erreur de profil", { status: 500 });
     }
   }
 
@@ -78,10 +78,10 @@ class UserService {
 
         new: true,
       });
-      return new Response(JSON.stringify(profile), { status: 200 });
+      return jsonResponse(JSON.stringify(profile), { status: 200 });
     } catch (error) {
       console.log(error);
-      return new Response("Erreur de profil", { status: 500 });
+      return jsonResponse("Erreur de profil", { status: 500 });
     }
   }
 
@@ -101,12 +101,12 @@ class UserService {
       }
 
       const saveUser = await user.save();
-      return new Response(JSON.stringify(saveUser), {
+      return jsonResponse(JSON.stringify(saveUser), {
         status: 200,
       });
     } catch (error) {
       console.log(error);
-      return new Response(error.message, {
+      return jsonResponse(error.message, {
         status: 500,
       });
     }
@@ -122,7 +122,7 @@ class UserService {
       console.log("user Exist");
 
       if (userExist) {
-        console.log(new Response("Erreur de serveur", { status: 500 }));
+        console.log(jsonResponse("Erreur de serveur", { status: 500 }));
         return res.json(jsonResponse(undefined, false, "user already exist"));
       }
 
@@ -136,11 +136,10 @@ class UserService {
 
       const saveUser = await user.save();
       console.log(passhash, saveUser);
-      console.log(new Response("Erreur de serveur", { status: 500 }));
-      return res.json(jsonResponse(saveUser, true));
+      return res.json(jsonResponse(saveUser, { status: 500 }));
     } catch (error) {
       console.log(error);
-      return new Response("Erreur de serveur", { status: 500 });
+      return jsonResponse("Erreur de serveur", { status: 500 });
     }
   }
 
@@ -149,12 +148,12 @@ class UserService {
     try {
       const user = await User.findById(session.id);
       console.log(user);
-      return new Response(JSON.stringify(user), {
+      return jsonResponse(JSON.stringify(user), {
         status: 200,
       });
     } catch (error) {
       console.log(error);
-      return new Response("Erreur de serveur", { status: 500 });
+      return jsonResponse("Erreur de serveur", { status: 500 });
     }
   }
 }

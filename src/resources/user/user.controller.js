@@ -20,7 +20,6 @@ class UserController {
   }
 
   initializeRoutes() {
-
     this.router.post(
       `${this.path}/profile/`,
       zodValidator(createUser),
@@ -28,7 +27,11 @@ class UserController {
       this.userService.create
     );
 
-    this.router.get(`${this.path}/profile/`, verifyUser, this.userService.getAll);
+    this.router.get(
+      `${this.path}/profile/`,
+      verifyUser,
+      this.userService.getAll
+    );
 
     this.router.put(
       `${this.path}/profile/`,

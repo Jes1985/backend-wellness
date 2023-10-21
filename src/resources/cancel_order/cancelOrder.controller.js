@@ -20,7 +20,6 @@ class CancelOrderController {
   }
 
   initializeRoutes() {
-
     this.router.post(
       `${this.path}/`,
       zodValidator(createCancelOrder),
@@ -28,7 +27,11 @@ class CancelOrderController {
       this.cancelOrderService.create
     );
 
-    this.router.get(`${this.path}/`, verifyUser, this.cancelOrderService.getAll);
+    this.router.get(
+      `${this.path}/`,
+      verifyUser,
+      this.cancelOrderService.getAll
+    );
 
     this.router.get(
       `${this.path}/:id`,

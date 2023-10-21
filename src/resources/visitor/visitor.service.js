@@ -1,6 +1,7 @@
 const Visitor = require("./visitor.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
+const { jsonResponse } = require("../../utils/jsonResponse.util");
 
 const ERROR_MESSAGES = {
   CREATION_ERROR: "Erreur de donnée",
@@ -106,12 +107,12 @@ class VisitorService {
           visitorsPerM,
         };
 
-        return new Response(JSON.stringify(stat), {
+        return jsonResponse(JSON.stringify(stat), {
           status: 200,
         });
       } catch (error) {
         console.log("erreur", error);
-        return new Response("Internal Server Error", { status: 500 });
+        return jsonResponse("Internal Server Error", { status: 500 });
       }
     }
   }

@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const orderService = require("./order.service");
-const Stripe = require('stripe');
+const Stripe = require("stripe");
 
 // const stripe = new Stripe(
 //   'sk_test_51NAUrNHfsyM3JiDgg8h3ehA01QWIFUDIXBit0ljMxZDQi1u3cF8eZBRPUYEogGevE86G6i2IxpnrpAbHzNuga3Wz00vd4hE2kd'
@@ -25,7 +25,6 @@ class OrderController {
   }
 
   initializeRoutes() {
-
     this.router.post(
       `${this.path}/`,
       zodValidator(createOrder),
@@ -35,9 +34,17 @@ class OrderController {
 
     this.router.get(`${this.path}/`, verifyUser, this.orderService.getAll);
 
-    this.router.get(`${this.path}/all/`, verifyUser, this.orderService.getAllOrder);
+    this.router.get(
+      `${this.path}/all/`,
+      verifyUser,
+      this.orderService.getAllOrder
+    );
 
-    this.router.get(`${this.path}/stats/`, verifyUser, this.orderService.getStats);
+    this.router.get(
+      `${this.path}/stats/`,
+      verifyUser,
+      this.orderService.getStats
+    );
 
     this.router.get(
       `${this.path}/add_options/:id`,
@@ -86,7 +93,6 @@ class OrderController {
       verifyUser,
       this.orderService.updateStatus
     );
-
 
     this.router.get(
       `${this.path}/:id`,
