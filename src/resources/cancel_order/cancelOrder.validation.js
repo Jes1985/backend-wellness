@@ -6,6 +6,7 @@ const createCancelOrder = z.object({
     sellerId: z.string(),
     orderId: z.string(),
     reason: z.string(),
+    status: z.string(),
   }),
 });
 
@@ -15,6 +16,7 @@ const updateCancelOrder = z.object({
     sellerId: z.string().optional(),
     orderId: z.string().optional(),
     reason: z.string().optional(),
+    status: z.string().optional(),
   }),
   params: z.object({
     id: z.string(),
