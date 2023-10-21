@@ -126,11 +126,15 @@ class UserService {
       console.log("start request");
       const userExist = await User.findOne({ email });
 
-      console.log("user Exist");
-
       if (userExist) {
         console.log(jsonResponse("Erreur de serveur", { status: 500 }));
-        return res.json(jsonResponse(undefined, false, "user already exist"));
+        return res.json(
+          jsonResponse(
+            JSON.stringify(undefined),
+            { status: 400 },
+            "user already exist"
+          )
+        );
       }
 
       const passhash = await hashPassword(password);
@@ -143,7 +147,7 @@ class UserService {
 
       const saveUser = await user.save();
       console.log(passhash, saveUser);
-      return res.json(jsonResponse(JSON.stringify(saveUser), { status: 500 }));
+      return res.json(jsonResponse(JSON.stringify(saveUser), { status: 201 }));
     } catch (error) {
       console.log(error);
       return res.json(jsonResponse("Erreur de serveur", { status: 500 }));

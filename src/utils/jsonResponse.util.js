@@ -1,8 +1,12 @@
+const logger = require("../config/logger");
+
 const jsonResponse = (data, status, message) => {
   try {
-    const data = JSON.parse(data);
+    const parsedData = JSON.parse(data);
+    logger.info("Parsed Data");
+    console.log(parsedData);
     return {
-      data,
+      data: parsedData,
       status: status.status,
       message,
     };
