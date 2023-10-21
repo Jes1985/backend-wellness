@@ -13,6 +13,7 @@ const updateChat = z.object({
     sender: z.string().optional(),
     content: z.string().optional(),
     recipient: z.string().optional(),
+    isRead: z.boolean().optional(),
   }),
   params: z.object({
     id: z.string(),
