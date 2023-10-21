@@ -2,19 +2,17 @@ const z = require("zod").z;
 
 const createUser = z.object({
   body: z.object({
-    user: z.string(),
-    profil: z.string(),
-    bio: z.string(),
-    banner: z.string(),
+    username: z.string(),
+    email: z.string(),
+    password: z.string(),
   }),
 });
-// Pour tous les updates met exactement les champs du create suivi par .optional(). Uniquement pour les update
-const updateUser = z.object({
+
+const updateusername = z.object({
   body: z.object({
     user: z.string().optional(),
-    profil: z.string().optional(),
-    bio: z.string().optional(),
-    banner: z.string().optional(),
+    email: z.string().optional(),
+    password: z.string().optional(),
   }),
   params: z.object({
     id: z.string(),

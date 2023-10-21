@@ -9,6 +9,9 @@ const {
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
+const verifyUser = require("../../middleware/verifyUser");
+const Stripe = require('stripe');
+
 
 class CommentController {
   path = "/comments";
@@ -20,11 +23,11 @@ class CommentController {
 
   initializeRoutes() {
 
-    this.router.get(`${this.path}/seller_comments/`, this.commentService.getSellerComments);
+    this.router.get(`${this.path}/seller_comments/`, verifyUser, this.commentService.getSellerComments);
 
-    this.router.get(`${this.path}/user_comments/`, this.commentService.getUserComments);
+    this.router.get(`${this.path}/user_comments/`, verifyUser, this.commentService.getUserComments);
 
-    this.router.get(`${this.path}/user_rating/`, this.commentService.getUserRating);
+    this.router.get(`${this.path}/user_rating/`, verifyUser, this.commentService.getUserRating);
 
 
     this.router.get(
@@ -40,6 +43,7 @@ class CommentController {
     this.router.put(
       `${this.path}/:id`,
       zodValidator(updateComment),
+      verifyUser,
       this.commentService.updateById
     );
   }

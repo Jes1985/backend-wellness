@@ -7,6 +7,7 @@ const {
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
+const verifyUser = require("../../middleware/verifyUser");
 
 class ChatController {
   path = "/chats";
@@ -17,31 +18,35 @@ class ChatController {
   }
 
   initializeRoutes() {
-    this.router.get(`${this.path}/listuser/`, this.chatService.listUser);
+    this.router.get(`${this.path}/listuser/`, verifyUser, this.chatService.listUser);
 
-    this.router.get(`${this.path}/`, this.chatService.getAll);
+    this.router.get(`${this.path}/`, verifyUser, this.chatService.getAll);
 
     this.router.post(
-      `${this.path}/`, 
+      `${this.path}/`,
       zodValidator(updateChat),
+      verifyUser,
       this.chatService.create
     );
 
     this.router.put(
-      `${this.path}/`, 
+      `${this.path}/`,
       zodValidator(updateChat),
+      verifyUser,
       this.chatService.update
     );
 
     this.router.get(
       `${this.path}/:id`,
       zodValidator(getChat),
+      verifyUser,
       this.chatService.getById
     );
 
     this.router.put(
       `${this.path}/:id`,
       zodValidator(updateChat),
+      verifyUser,
       this.chatService.updateById
     );
   }

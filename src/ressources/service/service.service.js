@@ -1,4 +1,5 @@
 const Service = require("./service.model");
+const User = require("../user/user.model")
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
 
@@ -75,8 +76,8 @@ class ServiceService {
   }
 
   async patchById(req, res, next) {
-    const { category, souscategory, title } = await req.json();
-    const session = await getUseSession();
+    const { category, souscategory, title } = await req.body;
+    const session = req.user;
 
     try {
       if (!session) {
@@ -300,7 +301,7 @@ class ServiceService {
     const session = req.user;
 
     if (session) {
-      const { title, category, souscategory, cities } = await req.json();
+      const { title, category, souscategory, cities } = await req.body;
 
       try {
         const service = new Service({
@@ -328,7 +329,7 @@ class ServiceService {
     const session = req.user;
 
     if (session) {
-      const { title, category, souscategory, cities } = await req.json();
+      const { title, category, souscategory, cities } = await req.body;
 
       try {
         const service = new Service({
@@ -356,7 +357,7 @@ class ServiceService {
     const session = req.user;
 
     if (session) {
-      const { title, valeur } = await req.json();
+      const { title, valeur } = await req.body;
 
       try {
         const service = await Service.findByIdAndUpdate(
@@ -387,7 +388,7 @@ class ServiceService {
     const session = req.user;
 
     if (session) {
-      const { options } = await req.json();
+      const { options } = await req.body;
 
       try {
         const service = await Service.findByIdAndUpdate(
@@ -415,7 +416,7 @@ class ServiceService {
     const session = req.user;
 
     if (session) {
-      const { serviceNote } = await req.json();
+      const { serviceNote } = await req.body;
 
       try {
         const service = await Service.findByIdAndUpdate(
@@ -443,7 +444,7 @@ class ServiceService {
     const session = req.user;
 
     if (session) {
-      const { image } = await req.json();
+      const { image } = await req.body;
 
       try {
         const service = await Service.findByIdAndUpdate(
@@ -474,7 +475,7 @@ class ServiceService {
     if (session) {
       try {
         // Vérifier si le service est déjà dans les favoris de l'utilisateur
-        const { serviceId } = await req.json();
+        const { serviceId } = await req.body;
         const user = await User.findById(session.id);
         const serviceIndex = user.favoriteServices.indexOf(serviceId);
 
@@ -688,11 +689,11 @@ class ServiceService {
 
     const search = keywords
       ? {
-          title: {
-            $regex: keywords,
-            $options: "i",
-          },
-        }
+        title: {
+          $regex: keywords,
+          $options: "i",
+        },
+      }
       : {};
 
     const total = await Service.countDocuments({

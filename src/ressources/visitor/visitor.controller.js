@@ -9,6 +9,7 @@ const {
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
+const verifyUser = require("../../middleware/verifyUser");
 
 class VisitorController {
   path = "/visitors";
@@ -20,7 +21,7 @@ class VisitorController {
 
   initializeRoutes() {
 
-    this.router.get(`${this.path}/stat/`, this.visitorService.getAll);
+    this.router.get(`${this.path}/stat/`, verifyUser, this.visitorService.getAll);
 
   }
 }

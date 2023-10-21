@@ -9,6 +9,7 @@ const {
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
+const verifyUser = require("../../middleware/verifyUser");
 
 class ChatController {
   path = "/chatuser";
@@ -20,7 +21,7 @@ class ChatController {
 
   initializeRoutes() {
 
-    this.router.get(`${this.path}/`, this.chatService.getAllChatUser);
+    this.router.get(`${this.path}/`, verifyUser, this.chatService.getAllChatUser);
   }
 }
 

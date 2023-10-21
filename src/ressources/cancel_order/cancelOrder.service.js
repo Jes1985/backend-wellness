@@ -18,7 +18,7 @@ class CancelOrderService {
 
     if (session) {
       try {
-        const { value } = await req.json();
+        const { value } = await req.body;
         const id = req.params.id;
 
         const canceledMessage = await CancelOrder.findOne({
@@ -109,7 +109,7 @@ class CancelOrderService {
     const session = req.user;
 
     if (session) {
-      const { orderId, url, reason } = await req.json();
+      const { orderId, url, reason } = await req.body;
 
       try {
         const oder = await Order.findById(orderId);

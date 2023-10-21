@@ -19,7 +19,7 @@ class UserService {
     const session = req.user;
 
     if (session) {
-      const { profil, bio, banner } = await req.json();
+      const { profil, bio, banner } = await req.body;
       try {
         const profile = new Profil({
           user: session.id,
@@ -67,7 +67,7 @@ class UserService {
         message: "Vous devez vous connecter pour effectuer cette action",
       });
     }
-    const { profil, bio, banner } = await req.json();
+    const { profil, bio, banner } = await req.body;
     try {
       const profile = await Profil.findOneAndUpdate({
         user: session.id,
@@ -88,7 +88,7 @@ class UserService {
 
   async updatePassword(req, res, next) {
     try {
-      const { reset_code, password } = await req.json();
+      const { reset_code, password } = await req.body;
       const user = await User.findOne({ reset_code: reset_code });
 
       if (!user) {
@@ -114,7 +114,7 @@ class UserService {
   }
 
   async updateSignup(req, res, next) {
-    const { username, email, password } = await req.json();
+    const { username, email, password } = await req.body;
 
     try {
       const userExist = await User.findOne({ email });

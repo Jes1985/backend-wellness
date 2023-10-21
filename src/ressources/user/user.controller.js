@@ -9,6 +9,7 @@ const {
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
+const verifyUser = require("../../middleware/verifyUser");
 
 class UserController {
   path = "/users";
@@ -23,14 +24,16 @@ class UserController {
     this.router.post(
       `${this.path}/profile/`,
       zodValidator(createUser),
+      verifyUser,
       this.userService.create
     );
 
-    this.router.get(`${this.path}/profile/`, this.userService.getAll);
+    this.router.get(`${this.path}/profile/`, verifyUser, this.userService.getAll);
 
     this.router.put(
       `${this.path}/profile/`,
       zodValidator(updateUser),
+      verifyUser,
       this.userService.updateById
     );
   }

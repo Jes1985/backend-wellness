@@ -9,7 +9,7 @@ const createBlog = z.object({
     category: z.string(),
   }),
 });
-// Pour tous les updates met exactement les champs du create suivi par .optional(). Uniquement pour les update
+
 const updateBlog = z.object({
   body: z.object({
     titre: z.string().optional(),

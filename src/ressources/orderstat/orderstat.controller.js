@@ -9,6 +9,7 @@ const {
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
+const verifyUser = require("../../middleware/verifyUser");
 
 class OrderController {
   path = "/orderstats";
@@ -20,7 +21,7 @@ class OrderController {
 
   initializeRoutes() {
 
-    this.router.get(`${this.path}/`, this.orderService.getOrderstats);
+    this.router.get(`${this.path}/`, verifyUser, this.orderService.getOrderstats);
 
   }
 }

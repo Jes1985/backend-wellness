@@ -21,7 +21,7 @@ class CommentService {
     }
     try {
       const id = req.params.id;
-      const { userId, name, text, star } = await req.json();
+      const { userId, name, text, star } = await req.body;
 
       const getOdre = await Order.findOne({ user: session.id, _id: id });
 
@@ -122,7 +122,7 @@ class CommentService {
   async deleteById(req, res, next) {
     try {
       const { serviceId, commentId } = req.params.id;
-      const { userId } = await req.json();
+      const { userId } = await req.body;
 
       // Rechercher le service correspondant
       const service = await Service.findById(serviceId);
@@ -169,7 +169,7 @@ class CommentService {
 
   async getById(req, res, next) {
     try {
-      const session = await getUseSession();
+      const session = req.user;
       const id = req.params.id;
       const order = await Order.findById(id);
 

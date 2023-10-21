@@ -72,7 +72,7 @@ class OrderService {
 
     if (session) {
       const { cart, FirstName, LastName, AddressLine1, Email } =
-        await req.json();
+        await req.body;
 
       let serviceCust = [];
 
@@ -186,7 +186,7 @@ class OrderService {
   async updateAddOptions(req, res, next) {
     const session = req.user;
 
-    const { options, totalPrice } = await req.json();
+    const { options, totalPrice } = await req.body;
 
     let serviceCust = [];
 
@@ -695,7 +695,7 @@ class OrderService {
   async updateStatus(req, res, next) {
     const session = req.user;
 
-    const { status } = await req.json();
+    const { status } = await req.body;
 
     if (session) {
       const id = req.params.id;

@@ -10,6 +10,7 @@ const jwt = require("jsonwebtoken");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
+const verifyUser = require("../../middleware/verifyUser");
 
 class UserController {
   path = "/signup";
@@ -20,7 +21,7 @@ class UserController {
   }
 
   initializeRoutes() {
-    this.router.get(`${this.path}/`, this.userService.getAllSignUp);
+    this.router.get(`${this.path}/`, verifyUser, this.userService.getAllSignUp);
 
     this.router.post(
       `${this.path}/`,

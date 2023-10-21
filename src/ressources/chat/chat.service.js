@@ -157,7 +157,7 @@ class ChatService {
     const session = req.user;
 
     if (session) {
-      const { content, recipient } = await req.json();
+      const { content, recipient } = await req.body;
 
       try {
         const chat = new Chat({

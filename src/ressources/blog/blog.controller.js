@@ -9,6 +9,8 @@ const {
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
+const verifyUser = require("../../middleware/verifyUser");
+
 
 class BlogController {
   path = "/blogs";
@@ -19,13 +21,13 @@ class BlogController {
   }
 
   initializeRoutes() {
-    // ceci est niveau de /post directement. Si tu regarde dans le code next c'est au niveau de api/post/route. Alors que les autres sont dans api/post/[id]/route. Du genre les autres prennent un param Id.
     this.router.post(
       `${this.path}/`,
       zodValidator(createBlog),
+      verifyUser,
       this.blogService.create
     );
-    // Ceci aussi est au niveau de /post/route directement. On ne passe pas de param donc j'ai pas mis :id, Du genre ceci c'est pour recuperer tous les blogs.
+
     this.router.get(`${this.path}/`, this.blogService.getAll);
 
     this.router.get(`${this.path}/admin/list/`, this.blogService.getAdminList);
@@ -33,7 +35,6 @@ class BlogController {
     this.router.get(`${this.path}/by-categories/`, this.blogService.getByCategory);
 
 
-    // ce GET c'est pour recup un bog par son Id en  fait. Genre on veut recuper un seul blog quoi. Tu sais qu ele Id est unique non
     this.router.get(
       `${this.path}/:id`,
       zodValidator(getBlog),
@@ -42,11 +43,13 @@ class BlogController {
     this.router.delete(
       `${this.path}/:id`,
       zodValidator(deleteBlog),
+      verifyUser,
       this.blogService.deleteById
     );
     this.router.put(
       `${this.path}/:id`,
       zodValidator(updateBlog),
+      verifyUser,
       this.blogService.updateById
     );
   }
