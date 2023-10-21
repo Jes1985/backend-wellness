@@ -1,29 +1,29 @@
-const Chat = require("../chat/chat.model")
-const Order = require("../orders/order.model")
-const Service = require("../service/service.model")
+const Chat = require("../chat/chat.model");
+const Order = require("../orders/order.model");
+const Service = require("../service/service.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
 
 dbConnect();
 
 const ERROR_MESSAGES = {
-  CREATION_ERROR: 'Erreur de donnée',
+  CREATION_ERROR: "Erreur de donnée",
 };
 
 class CommentService {
   Comment = Comment;
 
   async updateById(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (!session) {
-      throw new Error('Vous devez vous connecter pour effectuer cette action');
+      throw new Error("Vous devez vous connecter pour effectuer cette action");
     }
     try {
       const id = req.params.id;
       const { userId, name, text, star } = await req.json();
 
-      const getOdre = await Order.findOne({ user: session.user.id, _id: id });
+      const getOdre = await Order.findOne({ user: session.id, _id: id });
 
       if (!getOdre) {
         throw new Error(`Vous n'etes pas autorisé à effectuer cette action`);
@@ -49,7 +49,7 @@ class CommentService {
 
       // Vérifier si l'utilisateur a déjà évalué ce service
       const existingComment = service.comment.find(
-        (comment) => comment.user.toString() === session.user.id
+        (comment) => comment.user.toString() === session.id
       );
 
       if (existingComment) {
@@ -65,8 +65,8 @@ class CommentService {
       } else {
         // Créer un nouvel objet commentaire
         const newComment = {
-          user: session.user.id,
-          name: session.user.username,
+          user: session.id,
+          name: session.username,
           text,
           star,
         };
@@ -87,8 +87,8 @@ class CommentService {
       await service.save();
 
       const chat = new Chat({
-        sender: session.user.id,
-        content: `Service ${order._id} a été approuvé par ${session.user.username}`,
+        sender: session.id,
+        content: `Service ${order._id} a été approuvé par ${session.username}`,
         recipient: order.sellerId,
       });
       await chat.save();
@@ -97,7 +97,7 @@ class CommentService {
         order.payementId
       );
 
-      if (paymentIntent.status !== 'succeeded') {
+      if (paymentIntent.status !== "succeeded") {
         await stripe.paymentIntents.capture(order.payementId);
       }
 
@@ -105,7 +105,7 @@ class CommentService {
         const payment = await stripe.paymentIntents.retrieve(
           order.optionpement.id
         );
-        if (payment.status !== 'succeeded') {
+        if (payment.status !== "succeeded") {
           await stripe.paymentIntents.capture(order.optionpement.id);
         }
       }
@@ -115,7 +115,7 @@ class CommentService {
       });
     } catch (error) {
       console.log(error);
-      return new Response('Erreur de serveur', { status: 500 });
+      return new Response("Erreur de serveur", { status: 500 });
     }
   }
 
@@ -137,7 +137,7 @@ class CommentService {
       );
 
       if (!comment) {
-        return res.status(404).json({ message: 'Commentaire non trouvé' });
+        return res.status(404).json({ message: "Commentaire non trouvé" });
       }
 
       // Supprimer le commentaire de la liste des commentaires du service
@@ -161,7 +161,7 @@ class CommentService {
       });
     } catch (error) {
       console.log(error);
-      return new Response('Erreur de suppression du commentaire', {
+      return new Response("Erreur de suppression du commentaire", {
         status: 500,
       });
     }
@@ -181,7 +181,7 @@ class CommentService {
 
       // Rechercher le commentaire de l'utilisateur pour le service
       const userComment = service.comment.find(
-        (comment) => comment.user.toString() === session.user.id
+        (comment) => comment.user.toString() === session.id
       );
 
       // Le commentaire de l'utilisateur existe
@@ -190,44 +190,44 @@ class CommentService {
       });
     } catch (error) {
       console.log(error);
-      return new Response('Erreur de serveur', { status: 500 });
+      return new Response("Erreur de serveur", { status: 500 });
     }
   }
 
   async getSellerComments(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       try {
         const comments = await Service.aggregate([
           // Étape 1 : Faire correspondre les services de l'utilisateur avec les commentaires
           {
-            $match: { user: session.user.id },
+            $match: { user: session.id },
           },
           // Étape 2 : Déplier les commentaires
           {
-            $unwind: '$comment',
+            $unwind: "$comment",
           },
           // Étape 3 : Rechercher l'utilisateur associé à chaque commentaire
           {
             $lookup: {
-              from: 'users',
-              localField: 'comment.user',
-              foreignField: '_id',
-              as: 'user',
+              from: "users",
+              localField: "comment.user",
+              foreignField: "_id",
+              as: "user",
             },
           },
           // Étape 4 : Supprimer les champs indésirables de l'utilisateur
           {
             $project: {
               _id: 0,
-              'comment._id': 1,
-              'comment.text': 1,
-              'comment.star': 1,
-              'user._id': 1,
-              'user.username': 1,
-              'user.email': 1,
-              'user.image': 1,
+              "comment._id": 1,
+              "comment.text": 1,
+              "comment.star": 1,
+              "user._id": 1,
+              "user.username": 1,
+              "user.email": 1,
+              "user.image": 1,
             },
           },
         ]);
@@ -236,31 +236,31 @@ class CommentService {
         });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de serveur', { status: 500 });
+        return new Response("Erreur de serveur", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async getUserComments(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       try {
         const serviceCommentCount = await Service.aggregate([
           {
             $match: {
-              user: session.user.id,
+              user: session.id,
             },
           },
           {
             $group: {
               _id: null,
-              totalComments: { $sum: { $size: '$comment' } },
+              totalComments: { $sum: { $size: "$comment" } },
             },
           },
         ]);
@@ -275,44 +275,45 @@ class CommentService {
         });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de serveur', { status: 500 });
+        return new Response("Erreur de serveur", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async getUserRating(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       try {
         const positiveReview = await Service.countDocuments({
-          user: session.user.id,
-          'comment.star': { $gte: 3 },
+          user: session.id,
+          "comment.star": { $gte: 3 },
         });
 
         const negativeReviews = await Service.countDocuments({
-          user: session.user.id,
-          'comment.star': { $lt: 3 },
+          user: session.id,
+          "comment.star": { $lt: 3 },
         });
 
         const totalComments = await Service.aggregate([
           {
-            $match: { user: session.user.id },
+            $match: { user: session.id },
           },
           {
             $group: {
               _id: null,
-              total: { $sum: '$numberOfRating' },
+              total: { $sum: "$numberOfRating" },
             },
           },
         ]);
 
-        const totalRating = totalComments.length > 0 ? totalComments[0].total : 0;
+        const totalRating =
+          totalComments.length > 0 ? totalComments[0].total : 0;
 
         console.log({ positiveReview, negativeReviews, totalRating });
 
@@ -328,20 +329,19 @@ class CommentService {
         );
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de serveur', { status: 500 });
+        return new Response("Erreur de serveur", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 }
 
-
 module.exports = CommentService;
 
 // async getSellerComments(req, res, next) {
-//   const session = "user"
+//   const session = req.user
 // }

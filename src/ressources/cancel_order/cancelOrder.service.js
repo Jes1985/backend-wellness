@@ -1,20 +1,20 @@
 const CancelOrder = require("./cancelOrder.model");
-const Chat = require("../chat/chat.model")
-const Order = require("../orders/order.model")
+const Chat = require("../chat/chat.model");
+const Order = require("../orders/order.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
 
 dbConnect();
 
 const ERROR_MESSAGES = {
-  CREATION_ERROR: 'Erreur de donnée',
+  CREATION_ERROR: "Erreur de donnée",
 };
 
 class CancelOrderService {
   CancelOrder = CancelOrder;
 
   async updateById(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       try {
@@ -22,11 +22,13 @@ class CancelOrderService {
         const id = req.params.id;
 
         const canceledMessage = await CancelOrder.findOne({
-          sellerId: session.user.id,
+          sellerId: session.id,
         });
 
         if (!canceledMessage) {
-          throw new Error(`Vous n'etes pas autorisé à effectuer cette opération`);
+          throw new Error(
+            `Vous n'etes pas autorisé à effectuer cette opération`
+          );
         }
 
         const orderCancel = await CancelOrder.findByIdAndUpdate(
@@ -39,24 +41,24 @@ class CancelOrderService {
           { new: true }
         );
 
-        if (value === 'rejetée') {
+        if (value === "rejetée") {
           const order = await Order.findByIdAndUpdate(
             orderCancel.orderId,
             {
               $set: {
-                status: 'Annulee',
+                status: "Annulee",
               },
             },
             { new: true }
           );
         }
 
-        if (value === 'approuvée') {
+        if (value === "approuvée") {
           const order = await Order.findByIdAndUpdate(
             orderCancel.orderId,
             {
               $set: {
-                status: 'Annulée',
+                status: "Annulée",
               },
             },
             { new: true }
@@ -72,14 +74,14 @@ class CancelOrderService {
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async getById(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     const id = req.params.id;
 
@@ -91,18 +93,20 @@ class CancelOrderService {
         });
       } catch (error) {
         console.log(error);
-        return new Response(`Erreur:Une erreur s'est produite`, { status: 500 });
+        return new Response(`Erreur:Une erreur s'est produite`, {
+          status: 500,
+        });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async create(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       const { orderId, url, reason } = await req.json();
@@ -120,13 +124,13 @@ class CancelOrderService {
           );
         }
 
-        if (oder.user.toString() !== session.user.id) {
+        if (oder.user.toString() !== session.id) {
           throw new Error(
             `Désolé vous n'etes pas autorisé a effectuer cette operation`
           );
         }
         const orderCancel = new CancelOrder({
-          user: session.user.id,
+          user: session.id,
           sellerId: oder.sellerId,
           orderId,
           reason,
@@ -135,8 +139,8 @@ class CancelOrderService {
         await orderCancel.save();
 
         const chat = new Chat({
-          sender: session.user.id,
-          content: `Salut! Une demande d'annulation de la commande ${orderId} par ${session.user.username}. Voir <a href="${url}">ici</a>`,
+          sender: session.id,
+          content: `Salut! Une demande d'annulation de la commande ${orderId} par ${session.username}. Voir <a href="${url}">ici</a>`,
           recipient: oder.sellerId,
         });
 
@@ -151,51 +155,51 @@ class CancelOrderService {
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async getAll(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       try {
         const { searchParams } = new URL(req.url);
         const limit = 3;
-        const page = parseInt(searchParams.get('page')) || 1;
+        const page = parseInt(searchParams.get("page")) || 1;
         const skip = (page - 1) * limit;
 
-        let filter = searchParams.get('filter');
+        let filter = searchParams.get("filter");
         let filterValue = {};
 
         switch (filter) {
-          case 'en attente':
-            filterValue = { status: 'en attente' };
+          case "en attente":
+            filterValue = { status: "en attente" };
             break;
-          case 'approuvée':
-            filterValue = { status: 'approuvée' };
+          case "approuvée":
+            filterValue = { status: "approuvée" };
             break;
-          case 'rejetée':
-            filterValue = { status: 'rejetée' };
+          case "rejetée":
+            filterValue = { status: "rejetée" };
             break;
-          case 'Mes demandes':
-            filterValue = { user: session.user.id };
+          case "Mes demandes":
+            filterValue = { user: session.id };
             break;
           default:
             filterValue = {};
         }
 
         const total = await CancelOrder.countDocuments({
-          sellerId: session.user.id,
+          sellerId: session.id,
           ...filterValue,
         });
 
         const pages = Math.floor(total / limit) + (total % limit > 0 ? 1 : 0);
 
         const cancelOrder = await CancelOrder.find({
-          sellerId: session.user.id,
+          sellerId: session.id,
           ...filterValue,
         })
           .skip(skip)
@@ -207,16 +211,15 @@ class CancelOrderService {
         });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de service', { status: 500 });
+        return new Response("Erreur de creation de service", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 }
-
 
 module.exports = CancelOrderService;

@@ -9,6 +9,7 @@ const {
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
+const verifyUser = require("../../middleware/verifyUser");
 
 class ServiceController {
   path = "/admin_validate";
@@ -19,10 +20,10 @@ class ServiceController {
   }
 
   initializeRoutes() {
-
     this.router.put(
       `${this.path}/:id`,
       zodValidator(updateService),
+      verifyUser,
       this.serviceService.updateAdminValidate
     );
 

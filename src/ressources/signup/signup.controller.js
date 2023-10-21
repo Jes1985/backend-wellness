@@ -6,6 +6,7 @@ const {
   updateUser,
   createUser,
 } = require("../user/user.validation");
+const jwt = require("jsonwebtoken");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
@@ -19,10 +20,9 @@ class UserController {
   }
 
   initializeRoutes() {
-
     this.router.get(`${this.path}/`, this.userService.getAllSignUp);
 
-    this.router.patcposth(
+    this.router.post(
       `${this.path}/`,
       zodValidator(updateUser),
       this.userService.updateSignup

@@ -5,14 +5,14 @@ const { dbConnect } = require("../../config/dbConnect");
 dbConnect();
 
 const ERROR_MESSAGES = {
-  CREATION_ERROR: 'Erreur de donnée',
+  CREATION_ERROR: "Erreur de donnée",
 };
 
 class BlogService {
   Blog = Blog;
 
   async create(req, res, next) {
-    const session = "any";
+    const session = req.user;
 
     if (session) {
       const { titre, time, image, description, category } = req.body;
@@ -69,7 +69,7 @@ class BlogService {
   }
 
   async deleteById(req, res, next) {
-    const session = "user";
+    const session = req.user;
 
     /**
      * TODO: Add auth to check connected user before use this route
@@ -90,7 +90,7 @@ class BlogService {
   }
 
   async updateById(req, res, next) {
-    const session = "user";
+    const session = req.user;
 
     if (session) {
       const { titre, time, image, description, category } = req.body;
@@ -122,17 +122,17 @@ class BlogService {
   async getBlogCategory(req, res, next) {
     const { searchParams } = new URL(req.url);
     const limit = 4;
-    const pagem = parseInt(searchParams.get('pagem')) || 1;
-    const pagen = parseInt(searchParams.get('pagen')) || 1;
-    const pagei = parseInt(searchParams.get('pagei')) || 1;
+    const pagem = parseInt(searchParams.get("pagem")) || 1;
+    const pagen = parseInt(searchParams.get("pagen")) || 1;
+    const pagei = parseInt(searchParams.get("pagei")) || 1;
 
     const skipm = (pagem - 1) * limit;
     const skipn = (pagen - 1) * limit;
     const skipi = (pagei - 1) * limit;
     try {
       const countPromises = [
-        Blog.countDocuments({ category: 'Mieux connaitre la plateforme' }),
-        Blog.countDocuments({ category: 'Nos Nouvelles parutions' }),
+        Blog.countDocuments({ category: "Mieux connaitre la plateforme" }),
+        Blog.countDocuments({ category: "Nos Nouvelles parutions" }),
         Blog.countDocuments({ category: "S'informer et se former" }),
       ];
 
@@ -151,8 +151,8 @@ class BlogService {
         Blog.find({ category }).skip(skip).limit(limit).sort({ createdAt: -1 });
 
       const [mieuxConnaitre, nosNouvelles, informer] = await Promise.all([
-        getBlogs('Mieux connaitre la plateforme', skipm),
-        getBlogs('Nos Nouvelles parutions', skipn),
+        getBlogs("Mieux connaitre la plateforme", skipm),
+        getBlogs("Nos Nouvelles parutions", skipn),
         getBlogs("S'informer et se former", skipi),
       ]);
 
@@ -178,7 +178,7 @@ class BlogService {
     try {
       const { searchParams } = new URL(req.url);
       const limit = 6;
-      const page = searchParams.get('page') || 1;
+      const page = searchParams.get("page") || 1;
       const skip = (page - 1) * limit;
 
       const total = await Blog.countDocuments({});
@@ -194,7 +194,7 @@ class BlogService {
       });
     } catch (error) {
       console.log(error);
-      return new Response('Erreur de creation de service', { status: 500 });
+      return new Response("Erreur de creation de service", { status: 500 });
     }
   }
 
@@ -202,17 +202,17 @@ class BlogService {
     try {
       const { searchParams } = new URL(req.url);
       const limit = 4;
-      const pagem = parseInt(searchParams.get('pagem')) || 1;
-      const pagen = parseInt(searchParams.get('pagen')) || 1;
-      const pagei = parseInt(searchParams.get('pagei')) || 1;
+      const pagem = parseInt(searchParams.get("pagem")) || 1;
+      const pagen = parseInt(searchParams.get("pagen")) || 1;
+      const pagei = parseInt(searchParams.get("pagei")) || 1;
 
       const skipm = (pagem - 1) * limit;
       const skipn = (pagen - 1) * limit;
       const skipi = (pagei - 1) * limit;
 
       const countPromises = [
-        Blog.countDocuments({ category: 'Mieux connaitre la plateforme' }),
-        Blog.countDocuments({ category: 'Nos Nouvelles parutions' }),
+        Blog.countDocuments({ category: "Mieux connaitre la plateforme" }),
+        Blog.countDocuments({ category: "Nos Nouvelles parutions" }),
         Blog.countDocuments({ category: "S'informer et se former" }),
       ];
 
@@ -231,8 +231,8 @@ class BlogService {
         Blog.find({ category }).skip(skip).limit(limit).sort({ createdAt: -1 });
 
       const [mieuxConnaitre, nosNouvelles, informer] = await Promise.all([
-        getBlogs('Mieux connaitre la plateforme', skipm),
-        getBlogs('Nos Nouvelles parutions', skipn),
+        getBlogs("Mieux connaitre la plateforme", skipm),
+        getBlogs("Nos Nouvelles parutions", skipn),
         getBlogs("S'informer et se former", skipi),
       ]);
 
@@ -255,10 +255,9 @@ class BlogService {
   }
 
   async getBlogListAdmin(req, res, next) {
-
     const { searchParams } = new URL(req.url);
     const limit = 6;
-    const page = searchParams.get('page') || 1;
+    const page = searchParams.get("page") || 1;
     const skip = (page - 1) * limit;
     try {
       const total = await Blog.countDocuments({});
@@ -274,12 +273,9 @@ class BlogService {
       });
     } catch (error) {
       console.log(error);
-      return new Response('Erreur de creation de service', { status: 500 });
+      return new Response("Erreur de creation de service", { status: 500 });
     }
   }
-
-
 }
-
 
 module.exports = BlogService;

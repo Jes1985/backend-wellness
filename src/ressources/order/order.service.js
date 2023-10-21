@@ -1,20 +1,20 @@
 const Order = require("./order.model");
 const Chat = require("../chat/chat.model");
-const Service = require("../service/service.model")
+const Service = require("../service/service.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
 
 dbConnect();
 
 const ERROR_MESSAGES = {
-  CREATION_ERROR: 'Erreur de donnée',
+  CREATION_ERROR: "Erreur de donnée",
 };
 
 class OrderService {
   Order = Order;
 
   async getById(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       const id = req.params.id;
@@ -30,27 +30,27 @@ class OrderService {
         return new Response(JSON.stringify(oder), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de commande', { status: 500 });
+        return new Response("Erreur de creation de commande", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async updateById(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       const id = req.params.id;
       try {
         const oder = await Order.findById(id)
-          .populate('serviceId')
-          .populate('sellerId', 'username');
+          .populate("serviceId")
+          .populate("sellerId", "username");
 
-        // if (oder.sellerId._id.toString() !== session.user.id) {
+        // if (oder.sellerId._id.toString() !== session.id) {
         //   throw new Error(`Erreur: Vous n'etes pas autorisé a effectuer cette opération`);
         // }
 
@@ -61,14 +61,14 @@ class OrderService {
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async create(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       const { cart, FirstName, LastName, AddressLine1, Email } =
@@ -80,7 +80,7 @@ class OrderService {
 
       try {
         const oder = new Order({
-          user: session.user.id,
+          user: session.id,
           serviceId: cart.serviceId,
           sellerId: cart.sellerId,
           price: cart.price,
@@ -96,28 +96,28 @@ class OrderService {
         return new Response(JSON.stringify(oder), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de commande', { status: 500 });
+        return new Response("Erreur de creation de commande", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async getAll(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       try {
         const { searchParams } = new URL(req.url);
         const limit = 4;
-        const page = searchParams.get('page') || 1;
+        const page = searchParams.get("page") || 1;
         const skip = (page - 1) * limit;
 
         const total = await Order.countDocuments({
-          // sellerId: session.user.id,
+          // sellerId: session.id,
           // ispaid: true,
         });
 
@@ -125,12 +125,12 @@ class OrderService {
 
         const oder = await Order.find({
           // ispaid: true,
-          // sellerId: session.user.id
+          // sellerId: session.id
         })
-          .populate('sellerId', 'username')
+          .populate("sellerId", "username")
           .skip(skip)
           .limit(limit)
-          .populate('serviceId')
+          .populate("serviceId")
           .sort({ createdAt: -1 });
 
         return new Response(JSON.stringify({ oder, pages, total }), {
@@ -138,24 +138,24 @@ class OrderService {
         });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de commande', { status: 500 });
+        return new Response("Erreur de creation de commande", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async getAddOptions(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       const id = req.params.id;
       try {
         const order = await Order.findById(id);
-        if (order.user.toString() !== session.user.id) {
+        if (order.user.toString() !== session.id) {
           throw new Error(
             `Erreur:vous n'etes pas autorisé a modifier cette commande`,
             { status: 404 }
@@ -169,20 +169,22 @@ class OrderService {
           );
         }
         const service = await Service.findById(order.serviceId);
-        return new Response(JSON.stringify({ order, service }), { status: 201 });
+        return new Response(JSON.stringify({ order, service }), {
+          status: 201,
+        });
       } catch (error) {
         return new Response(error, { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async updateAddOptions(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     const { options, totalPrice } = await req.json();
 
@@ -200,7 +202,7 @@ class OrderService {
           {
             $push: { costumservice: option },
             $inc: { price: totalPrice },
-            $set: { 'optionpement.amount': totalPrice },
+            $set: { "optionpement.amount": totalPrice },
           },
           { new: true }
         );
@@ -208,36 +210,36 @@ class OrderService {
         return new Response(JSON.stringify(oder), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de commande', { status: 500 });
+        return new Response("Erreur de creation de commande", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async getAllOrder(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     const { searchParams } = new URL(req.url);
 
     const limit = 6;
-    const page = searchParams.get('page') || 1;
+    const page = searchParams.get("page") || 1;
     const skip = (page - 1) * limit;
 
     if (session) {
       try {
-        const oder = await Order.find({ user: session.user.id, ispaid: true })
-          .populate('sellerId', 'username')
+        const oder = await Order.find({ user: session.id, ispaid: true })
+          .populate("sellerId", "username")
           .skip(skip)
           .limit(limit)
-          .populate('serviceId')
+          .populate("serviceId")
           .sort({ createdAt: -1 });
 
         const total = await Order.countDocuments({
-          user: session.user.id,
+          user: session.id,
           ispaid: true,
         });
 
@@ -248,18 +250,18 @@ class OrderService {
         });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de commande', { status: 500 });
+        return new Response("Erreur de creation de commande", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async updateOptions(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       const id = req.params.id;
@@ -267,7 +269,7 @@ class OrderService {
         const oder = await Order.findByIdAndUpdate(
           id,
           {
-            $set: { 'optionpement.ispaid': true },
+            $set: { "optionpement.ispaid": true },
           },
           { new: true }
         );
@@ -275,11 +277,11 @@ class OrderService {
         return new Response(JSON.stringify(oder), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de commande', { status: 500 });
+        return new Response("Erreur de creation de commande", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
@@ -313,10 +315,10 @@ class OrderService {
           $group: {
             _id: null,
             totalResponseTime: {
-              $sum: { $subtract: ['$createdAt', '$prevCreatedAt'] },
+              $sum: { $subtract: ["$createdAt", "$prevCreatedAt"] },
             },
             numberOfResponses: { $sum: 1 },
-            prevCreatedAt: { $last: '$createdAt' },
+            prevCreatedAt: { $last: "$createdAt" },
           },
         },
         {
@@ -324,11 +326,11 @@ class OrderService {
             _id: 0,
             averageResponseTimeInSeconds: {
               $cond: [
-                { $gt: ['$numberOfResponses', 0] },
+                { $gt: ["$numberOfResponses", 0] },
                 {
                   $divide: [
-                    { $toLong: '$totalResponseTime' },
-                    { $multiply: ['$numberOfResponses', 1000] },
+                    { $toLong: "$totalResponseTime" },
+                    { $multiply: ["$numberOfResponses", 1000] },
                   ],
                 },
                 0,
@@ -340,31 +342,37 @@ class OrderService {
           $project: {
             averageResponseTime: {
               $cond: [
-                { $gte: ['$averageResponseTimeInSeconds', 60] }, // Greater than or equal to 1 minute
+                { $gte: ["$averageResponseTimeInSeconds", 60] }, // Greater than or equal to 1 minute
                 {
                   $cond: [
-                    { $gte: ['$averageResponseTimeInSeconds', 3600] }, // Greater than or equal to 1 hour
+                    { $gte: ["$averageResponseTimeInSeconds", 3600] }, // Greater than or equal to 1 hour
                     {
                       $cond: [
-                        { $gte: ['$averageResponseTimeInSeconds', 86400] }, // Greater than or equal to 1 day
+                        { $gte: ["$averageResponseTimeInSeconds", 86400] }, // Greater than or equal to 1 day
                         {
                           $concat: [
                             {
                               $toString: {
-                                $divide: ['$averageResponseTimeInSeconds', 86400],
+                                $divide: [
+                                  "$averageResponseTimeInSeconds",
+                                  86400,
+                                ],
                               },
                             },
-                            ' jours',
+                            " jours",
                           ],
                         },
                         {
                           $concat: [
                             {
                               $toString: {
-                                $divide: ['$averageResponseTimeInSeconds', 3600],
+                                $divide: [
+                                  "$averageResponseTimeInSeconds",
+                                  3600,
+                                ],
                               },
                             },
-                            ' heures',
+                            " heures",
                           ],
                         },
                       ],
@@ -373,18 +381,18 @@ class OrderService {
                       $concat: [
                         {
                           $toString: {
-                            $divide: ['$averageResponseTimeInSeconds', 60],
+                            $divide: ["$averageResponseTimeInSeconds", 60],
                           },
                         },
-                        ' minutes',
+                        " minutes",
                       ],
                     },
                   ],
                 },
                 {
                   $concat: [
-                    { $toString: '$averageResponseTimeInSeconds' },
-                    ' secondes',
+                    { $toString: "$averageResponseTimeInSeconds" },
+                    " secondes",
                   ],
                 },
               ],
@@ -414,12 +422,12 @@ class OrderService {
         );
       }
     } catch (error) {
-      return new Response('Erreur, aucune commande trouvé', { status: 500 });
+      return new Response("Erreur, aucune commande trouvé", { status: 500 });
     }
   }
 
   async getSellerStat(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     const id = req.params.id;
     try {
@@ -449,10 +457,10 @@ class OrderService {
           $group: {
             _id: null,
             totalResponseTime: {
-              $sum: { $subtract: ['$createdAt', '$prevCreatedAt'] },
+              $sum: { $subtract: ["$createdAt", "$prevCreatedAt"] },
             },
             numberOfResponses: { $sum: 1 },
-            prevCreatedAt: { $last: '$createdAt' },
+            prevCreatedAt: { $last: "$createdAt" },
           },
         },
         {
@@ -460,11 +468,11 @@ class OrderService {
             _id: 0,
             averageResponseTimeInSeconds: {
               $cond: [
-                { $gt: ['$numberOfResponses', 0] },
+                { $gt: ["$numberOfResponses", 0] },
                 {
                   $divide: [
-                    { $toLong: '$totalResponseTime' },
-                    { $multiply: ['$numberOfResponses', 1000] },
+                    { $toLong: "$totalResponseTime" },
+                    { $multiply: ["$numberOfResponses", 1000] },
                   ],
                 },
                 0,
@@ -476,31 +484,37 @@ class OrderService {
           $project: {
             averageResponseTime: {
               $cond: [
-                { $gte: ['$averageResponseTimeInSeconds', 60] }, // Greater than or equal to 1 minute
+                { $gte: ["$averageResponseTimeInSeconds", 60] }, // Greater than or equal to 1 minute
                 {
                   $cond: [
-                    { $gte: ['$averageResponseTimeInSeconds', 3600] }, // Greater than or equal to 1 hour
+                    { $gte: ["$averageResponseTimeInSeconds", 3600] }, // Greater than or equal to 1 hour
                     {
                       $cond: [
-                        { $gte: ['$averageResponseTimeInSeconds', 86400] }, // Greater than or equal to 1 day
+                        { $gte: ["$averageResponseTimeInSeconds", 86400] }, // Greater than or equal to 1 day
                         {
                           $concat: [
                             {
                               $toString: {
-                                $divide: ['$averageResponseTimeInSeconds', 86400],
+                                $divide: [
+                                  "$averageResponseTimeInSeconds",
+                                  86400,
+                                ],
                               },
                             },
-                            ' jrs',
+                            " jrs",
                           ],
                         },
                         {
                           $concat: [
                             {
                               $toString: {
-                                $divide: ['$averageResponseTimeInSeconds', 3600],
+                                $divide: [
+                                  "$averageResponseTimeInSeconds",
+                                  3600,
+                                ],
                               },
                             },
-                            ' h',
+                            " h",
                           ],
                         },
                       ],
@@ -509,18 +523,18 @@ class OrderService {
                       $concat: [
                         {
                           $toString: {
-                            $divide: ['$averageResponseTimeInSeconds', 60],
+                            $divide: ["$averageResponseTimeInSeconds", 60],
                           },
                         },
-                        ' mins',
+                        " mins",
                       ],
                     },
                   ],
                 },
                 {
                   $concat: [
-                    { $toString: '$averageResponseTimeInSeconds' },
-                    ' secs',
+                    { $toString: "$averageResponseTimeInSeconds" },
+                    " secs",
                   ],
                 },
               ],
@@ -530,7 +544,7 @@ class OrderService {
       ]);
       const { averageResponseTime } = response[0];
 
-      if (averageResponseTime === '0 secs') {
+      if (averageResponseTime === "0 secs") {
         return new Response(
           JSON.stringify({
             Ordercomplete,
@@ -550,39 +564,39 @@ class OrderService {
         );
       }
     } catch (error) {
-      return new Response('Erreur, aucune commande trouvé', { status: 500 });
+      return new Response("Erreur, aucune commande trouvé", { status: 500 });
     }
   }
 
   async getServices(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       const id = req.params.id;
       try {
         const oder = await Order.findById(id)
-          .populate('serviceId')
-          .populate('sellerId', 'username');
+          .populate("serviceId")
+          .populate("sellerId", "username");
 
-        // if (oder.sellerId._id.toString() !== session.user.id) {
+        // if (oder.sellerId._id.toString() !== session.id) {
         //   throw new Error(`Erreur: Vous n'etes pas autorisé a effectuer cette opération`);
         // }
 
         return new Response(JSON.stringify(oder), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur, aucune commande trouvé', { status: 500 });
+        return new Response("Erreur, aucune commande trouvé", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async getStats(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       try {
@@ -591,12 +605,12 @@ class OrderService {
         const startOfYear = new Date(currentYear, 0, 1);
 
         const order = await Order.countDocuments({
-          sellerId: session.user.id,
+          sellerId: session.id,
           isCompleted: false,
         });
 
         const finishedOrder = await Order.countDocuments({
-          sellerId: session.user.id,
+          sellerId: session.id,
           isCompleted: true,
         });
 
@@ -608,13 +622,13 @@ class OrderService {
                 $lte: new Date(currentYear, currentDate.getMonth(), 31),
               },
               isCompleted: true,
-              sellerId: session.user.id,
+              sellerId: session.id,
             },
           },
           {
             $group: {
-              _id: { $month: '$createdAt' },
-              revenue: { $sum: '$price' },
+              _id: { $month: "$createdAt" },
+              revenue: { $sum: "$price" },
             },
           },
           {
@@ -625,8 +639,8 @@ class OrderService {
         ]);
 
         const monthLabels = monthlyRevenue.map((entry) =>
-          new Date(currentYear, entry._id - 1).toLocaleString('default', {
-            month: 'short',
+          new Date(currentYear, entry._id - 1).toLocaleString("default", {
+            month: "short",
           })
         );
 
@@ -640,13 +654,13 @@ class OrderService {
                 $lte: currentDate,
               },
               isCompleted: true,
-              sellerId: session.user.id,
+              sellerId: session.id,
             },
           },
           {
             $group: {
               _id: null,
-              revenue: { $sum: '$price' },
+              revenue: { $sum: "$price" },
             },
           },
         ]);
@@ -668,18 +682,18 @@ class OrderService {
         );
       } catch (error) {
         console.error(error);
-        return new Response('Erreur de recherche de commande', { status: 500 });
+        return new Response("Erreur de recherche de commande", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async updateStatus(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     const { status } = await req.json();
 
@@ -697,18 +711,18 @@ class OrderService {
         return new Response(JSON.stringify(oder), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de commande', { status: 500 });
+        return new Response("Erreur de creation de commande", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async getOrderstats(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       try {
@@ -721,13 +735,13 @@ class OrderService {
                 $gte: new Date(year, 0, 1), // Date de début de l'année en cours
                 $lt: new Date(year + 1, 0, 1), // Date de début de l'année suivante
               },
-              sellerId: session.user.id,
+              sellerId: session.id,
             },
           },
           {
             $group: {
-              _id: { $month: '$createdAt' },
-              totalSales: { $sum: { $toDouble: '$price' } },
+              _id: { $month: "$createdAt" },
+              totalSales: { $sum: { $toDouble: "$price" } },
             },
           },
           {
@@ -739,8 +753,8 @@ class OrderService {
 
         const moisAbreges = ventesParMois.map((vente) => {
           const mois = new Date(year, vente._id - 1, 1).toLocaleString(
-            'default',
-            { month: 'short' }
+            "default",
+            { month: "short" }
           );
           return mois.substring(0, 3);
         });
@@ -764,13 +778,13 @@ class OrderService {
                 $gte: previousDayEnd,
                 $lt: currentDate,
               },
-              sellerId: session.user.id,
+              sellerId: session.id,
             },
           },
           {
             $group: {
               _id: null,
-              totalSales: { $sum: { $toDouble: '$price' } },
+              totalSales: { $sum: { $toDouble: "$price" } },
             },
           },
         ]);
@@ -783,13 +797,13 @@ class OrderService {
                 $gte: previousDayStart,
                 $lt: previousDayEnd,
               },
-              sellerId: session.user.id,
+              sellerId: session.id,
             },
           },
           {
             $group: {
               _id: null,
-              totalSales: { $sum: { $toDouble: '$price' } },
+              totalSales: { $sum: { $toDouble: "$price" } },
             },
           },
         ]);
@@ -802,7 +816,7 @@ class OrderService {
 
         const differencePercentage = () => {
           if (previousDayTotalSales === 0) {
-            return 'N/A';
+            return "N/A";
           }
 
           const differencePercentage = (
@@ -814,13 +828,13 @@ class OrderService {
         };
 
         // Détermination du statut
-        let status = '';
+        let status = "";
         if (differencePercentage > 0) {
-          status = 'augmentation';
+          status = "augmentation";
         } else if (differencePercentage < 0) {
-          status = 'baisse';
+          status = "baisse";
         } else {
-          status = 'stable';
+          status = "stable";
         }
 
         const weekStat = {
@@ -837,12 +851,11 @@ class OrderService {
           }
         );
       } catch (error) {
-        console.log('erreur', error);
-        return new Response('Internal Server Error', { status: 500 });
+        console.log("erreur", error);
+        return new Response("Internal Server Error", { status: 500 });
       }
     }
   }
 }
-
 
 module.exports = OrderService;

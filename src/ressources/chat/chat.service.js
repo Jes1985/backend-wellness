@@ -7,19 +7,19 @@ const { dbConnect } = require("../../config/dbConnect");
 dbConnect();
 
 const ERROR_MESSAGES = {
-  CREATION_ERROR: 'Erreur de donnée',
+  CREATION_ERROR: "Erreur de donnée",
 };
 
 class ChatService {
   Chat = Chat;
 
   async listUser(req, res, next) {
-    const session = "user";
+    const session = req.user;
 
     if (session) {
       try {
-        const senderList = await Chat.distinct('sender', {
-          recipient: session.user.id,
+        const senderList = await Chat.distinct("sender", {
+          recipient: session.id,
         });
 
         const users = await User.aggregate([
@@ -28,19 +28,19 @@ class ChatService {
           },
           {
             $lookup: {
-              from: 'profils',
-              localField: '_id',
-              foreignField: 'user',
-              as: 'profile',
+              from: "profils",
+              localField: "_id",
+              foreignField: "user",
+              as: "profile",
             },
           },
           {
-            $unwind: { path: '$profile', preserveNullAndEmptyArrays: true },
+            $unwind: { path: "$profile", preserveNullAndEmptyArrays: true },
           },
           {
             $lookup: {
-              from: 'chats',
-              let: { userId: '$_id' },
+              from: "chats",
+              let: { userId: "$_id" },
               pipeline: [
                 {
                   $match: {
@@ -48,14 +48,14 @@ class ChatService {
                       $or: [
                         {
                           $and: [
-                            { $eq: ['$sender', '$$userId'] },
-                            { $eq: ['$recipient', session.user.id] },
+                            { $eq: ["$sender", "$$userId"] },
+                            { $eq: ["$recipient", session.id] },
                           ],
                         },
                         {
                           $and: [
-                            { $eq: ['$sender', session.user.id] },
-                            { $eq: ['$recipient', '$$userId'] },
+                            { $eq: ["$sender", session.id] },
+                            { $eq: ["$recipient", "$$userId"] },
                           ],
                         },
                       ],
@@ -74,20 +74,20 @@ class ChatService {
                   },
                 },
               ],
-              as: 'lastMessage',
+              as: "lastMessage",
             },
           },
           {
-            $unwind: { path: '$lastMessage', preserveNullAndEmptyArrays: true },
+            $unwind: { path: "$lastMessage", preserveNullAndEmptyArrays: true },
           },
           {
             $project: {
               _id: 1,
               username: 1,
               email: 1,
-              'profile.profil': 1,
-              'profile.banner': 1,
-              'profile.bio': 1,
+              "profile.profil": 1,
+              "profile.banner": 1,
+              "profile.bio": 1,
               createdAt: 1,
               updatedAt: 1,
               lastMessage: 1,
@@ -95,101 +95,101 @@ class ChatService {
           },
           {
             $group: {
-              _id: '$_id',
+              _id: "$_id",
               data: {
-                $first: '$$ROOT',
+                $first: "$$ROOT",
               },
             },
           },
           {
-            $replaceRoot: { newRoot: '$data' },
+            $replaceRoot: { newRoot: "$data" },
           },
           {
-            $sort: { 'lastMessage.createdAt': -1 },
+            $sort: { "lastMessage.createdAt": -1 },
           },
         ]);
 
         return new Response(JSON.stringify(users), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de serveur', { status: 500 });
+        return new Response("Erreur de serveur", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async getAll(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       try {
         const isNotRead = await Chat.find({
-          recipient: session.user.id,
+          recipient: session.id,
         })
-          .populate('sender', 'username')
+          .populate("sender", "username")
           .sort({ createdAt: -1 });
 
         const Chats = await Chat.find({});
         const total = await Chat.countDocuments({
           isRead: false,
-          recipient: session.user.id,
+          recipient: session.id,
         });
         return new Response(JSON.stringify({ isNotRead, Chats, total }), {
           status: 201,
         });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de service', { status: 500 });
+        return new Response("Erreur de creation de service", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async create(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       const { content, recipient } = await req.json();
 
       try {
         const chat = new Chat({
-          sender: session.user.id,
+          sender: session.id,
           content,
           recipient,
         });
 
         await chat.save();
         const chatUser = await Chat.findById(chat._id).populate(
-          'sender',
-          'username'
+          "sender",
+          "username"
         );
         return new Response(JSON.stringify(chatUser), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de service', { status: 500 });
+        return new Response("Erreur de creation de service", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async update(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       try {
-        const filter = { isRead: false, recipient: session.user.id };
+        const filter = { isRead: false, recipient: session.id };
         const update = { $set: { isRead: true } };
         const result = await Chat.updateMany(filter, update);
         return new Response(JSON.stringify(result), {
@@ -197,18 +197,18 @@ class ChatService {
         });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de service', { status: 500 });
+        return new Response("Erreur de creation de service", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async getById(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     const id = req.params.id;
 
@@ -216,11 +216,11 @@ class ChatService {
       try {
         const Chats = await Chat.find({
           $or: [
-            { recipient: id, sender: session.user.id },
-            { recipient: session.user.id, sender: id },
+            { recipient: id, sender: session.id },
+            { recipient: session.id, sender: id },
           ],
         })
-          .populate('sender', 'username')
+          .populate("sender", "username")
           .sort({ createdAt: 1 });
 
         return new Response(JSON.stringify(Chats), {
@@ -228,19 +228,18 @@ class ChatService {
         });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de service', { status: 500 });
+        return new Response("Erreur de creation de service", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async updateById(req, res, next) {
-    const session = "user"
-
+    const session = req.user;
 
     if (session) {
       try {
@@ -256,29 +255,29 @@ class ChatService {
         return new Response(JSON.stringify(chat), { status: 201 });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de mise a jour', { status: 500 });
+        return new Response("Erreur de mise a jour", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
 
   async getAllChatUser(req, res, next) {
-    const session = "user"
+    const session = req.user;
 
     if (session) {
       try {
         const Chats = await Chat.find({
-          $or: [{ recipient: session.user.id }, { sender: session.user.id }],
+          $or: [{ recipient: session.id }, { sender: session.id }],
         })
-          .populate('sender', 'username')
+          .populate("sender", "username")
           .limit(8);
 
         const total = await Chat.countDocuments({
-          $or: [{ recipient: session.user.id }, { sender: session.user.id }],
+          $or: [{ recipient: session.id }, { sender: session.id }],
         });
 
         return new Response(JSON.stringify({ Chats, total }), {
@@ -286,16 +285,15 @@ class ChatService {
         });
       } catch (error) {
         console.log(error);
-        return new Response('Erreur de creation de service', { status: 500 });
+        return new Response("Erreur de creation de service", { status: 500 });
       }
     } else {
       return new Response(
-        'Vous devez vous connecter pour effectuer cette action',
+        "Vous devez vous connecter pour effectuer cette action",
         { status: 401 }
       );
     }
   }
-
 }
 
 module.exports = ChatService;
