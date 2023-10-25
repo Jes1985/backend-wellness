@@ -14,9 +14,6 @@ const updateProfile = z.object({
     bio: z.string().optional(),
     banner: z.string().optional(),
   }),
-  params: z.object({
-    id: z.string(),
-  }),
 });
 
 const createUser = z.object({

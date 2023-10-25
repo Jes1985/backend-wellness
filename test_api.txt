@@ -8,7 +8,6 @@ orderstat
 reset_password
 service
 stripe
-user
 visitor
 
 
@@ -19,3 +18,4 @@ blog
 blog_categorie
 blog_list_admin
 signup
+user
