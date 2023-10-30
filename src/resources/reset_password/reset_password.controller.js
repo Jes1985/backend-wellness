@@ -1,10 +1,7 @@
 const { Router } = require("express");
 const userService = require("../user/user.service");
 const {
-  getUser,
-  deleteUser,
-  updateUser,
-  createUser,
+  resetPassword
 } = require("../user/user.validation");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
@@ -21,7 +18,7 @@ class ResetPasswordController {
   initializeRoutes() {
     this.router.patch(
       `${this.path}/`,
-      zodValidator(updateUser),
+      zodValidator(resetPassword),
       this.userService.updatePassword
     );
   }

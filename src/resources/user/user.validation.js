@@ -41,6 +41,13 @@ const updateUser = z.object({
   }),
 });
 
+const resetPassword = z.object({
+  body: z.object({
+    reset_code: z.string(),
+    password: z.string(),
+  }),
+});
+
 const getUser = z.object({
   params: z.object({
     id: z.string(),
@@ -53,4 +60,4 @@ const deleteUser = z.object({
   }),
 });
 
-module.exports = { createUser, updateUser, getUser, deleteUser, createProfile, updateProfile };
+module.exports = { createUser, updateUser, getUser, deleteUser, createProfile, updateProfile, resetPassword };

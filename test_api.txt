@@ -1,14 +1,10 @@
 admin_validate
 cancel_order
-chat
-chatuser
 comment
 order
 orderstat
-reset_password
 service
 stripe
-visitor
 
 
 
@@ -19,3 +15,10 @@ blog_categorie
 blog_list_admin
 signup
 user
+chat   // la fonction get by id ne fonctionne pas.
+chatuser
+visitor
+
+
+
+reset_password

@@ -10,9 +10,6 @@ const createChat = z.object({
 
 const updateChat = z.object({
   body: z.object({
-    sender: z.string().optional(),
-    content: z.string().optional(),
-    recipient: z.string().optional(),
     isRead: z.boolean().optional(),
   }),
   params: z.object({

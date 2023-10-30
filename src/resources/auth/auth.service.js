@@ -29,7 +29,7 @@ class AuthService {
         isAdmin: userLogin.isAdmin,
       };
       const token = jwt.sign(user, process.env.JWT_ACCESS_KEY, {
-        expiresIn: "1d",
+        expiresIn: "3d",
       });
 
       return res.json(

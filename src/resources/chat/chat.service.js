@@ -239,7 +239,7 @@ class ChatService {
 
         return res.json(
           jsonResponse(JSON.stringify(Chats), {
-            status: 201,
+            status: 200,
           })
         );
       } catch (error) {
