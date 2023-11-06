@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const chatService = require("./chat.service");
-const { getChat, updateChat } = require("./chat.validation");
+const { createChat, getChat, updateChat } = require("./chat.validation");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
 const zodValidator = require("../../middleware/zod.middleware");
@@ -25,14 +25,13 @@ class ChatController {
 
     this.router.post(
       `${this.path}/`,
-      zodValidator(updateChat),
+      zodValidator(createChat),
       verifyUser,
       this.chatService.create
     );
 
     this.router.put(
       `${this.path}/`,
-      zodValidator(updateChat),
       verifyUser,
       this.chatService.update
     );

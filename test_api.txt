@@ -1,0 +1,24 @@
+admin_validate
+cancel_order
+comment
+order
+orderstat
+service
+stripe
+
+
+
+
+auth
+blog
+blog_categorie
+blog_list_admin
+signup
+user
+chat   // la fonction get by id ne fonctionne pas.
+chatuser
+visitor
+
+
+
+reset_password

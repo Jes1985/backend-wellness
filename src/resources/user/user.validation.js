@@ -1,5 +1,21 @@
 const z = require("zod").z;
 
+const createProfile = z.object({
+  body: z.object({
+    profil: z.string(),
+    bio: z.string(),
+    banner: z.string(),
+  }),
+});
+
+const updateProfile = z.object({
+  body: z.object({
+    profil: z.string().optional(),
+    bio: z.string().optional(),
+    banner: z.string().optional(),
+  }),
+});
+
 const createUser = z.object({
   body: z.object({
     username: z.string(),
@@ -25,6 +41,13 @@ const updateUser = z.object({
   }),
 });
 
+const resetPassword = z.object({
+  body: z.object({
+    reset_code: z.string(),
+    password: z.string(),
+  }),
+});
+
 const getUser = z.object({
   params: z.object({
     id: z.string(),
@@ -37,4 +60,4 @@ const deleteUser = z.object({
   }),
 });
 
-module.exports = { createUser, updateUser, getUser, deleteUser };
+module.exports = { createUser, updateUser, getUser, deleteUser, createProfile, updateProfile, resetPassword };

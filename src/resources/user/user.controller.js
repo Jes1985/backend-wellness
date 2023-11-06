@@ -5,6 +5,9 @@ const {
   deleteUser,
   updateUser,
   createUser,
+  createProfile,
+  updateProfil,
+  updateProfile,
 } = require("./user.validation");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
 const logger = require("./../../config/logger");
@@ -22,7 +25,7 @@ class UserController {
   initializeRoutes() {
     this.router.post(
       `${this.path}/profile/`,
-      zodValidator(createUser),
+      zodValidator(createProfile),
       verifyUser,
       this.userService.create
     );
@@ -35,7 +38,7 @@ class UserController {
 
     this.router.put(
       `${this.path}/profile/`,
-      zodValidator(updateUser),
+      zodValidator(updateProfile),
       verifyUser,
       this.userService.updateById
     );

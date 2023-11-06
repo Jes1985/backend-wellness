@@ -2,6 +2,7 @@ const Blog = require("./blog.model");
 const HttpException = require("../../utils/exceptions/http.exception");
 const { dbConnect } = require("../../config/dbConnect");
 const { jsonResponse } = require("../../utils/jsonResponse.util");
+require('dotenv').config();
 
 const ERROR_MESSAGES = {
   CREATION_ERROR: "Erreur de donnée",
@@ -134,7 +135,9 @@ class BlogService {
   }
 
   async getBlogCategory(req, res, next) {
-    const { searchParams } = new URL(req.url);
+    console.log(req)
+    const { searchParams } = new URL(process.env.URL + req.url);
+    console.log(req.url, searchParams)
     const limit = 4;
     const pagem = parseInt(searchParams.get("pagem")) || 1;
     const pagen = parseInt(searchParams.get("pagen")) || 1;
@@ -181,7 +184,7 @@ class BlogService {
 
       return res.json(
         jsonResponse(JSON.stringify(responseData), {
-          status: 201,
+          status: 200,
         })
       );
     } catch (error) {
@@ -194,7 +197,7 @@ class BlogService {
 
   async getAdminList(req, res, next) {
     try {
-      const { searchParams } = new URL(req.url);
+      const { searchParams } = new URL(process.env.URL + req.url);
       const limit = 6;
       const page = searchParams.get("page") || 1;
       const skip = (page - 1) * limit;
@@ -281,7 +284,7 @@ class BlogService {
   }
 
   async getBlogListAdmin(req, res, next) {
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(process.env.URL + req.url);
     const limit = 6;
     const page = searchParams.get("page") || 1;
     const skip = (page - 1) * limit;
